@@ -2,6 +2,7 @@ import CanvasHandler from './classes/CanvasHandler'
 import GridFactory from './classes/GridFactory'
 import MouseState from './classes/MouseState'
 import Vector2D from './classes/Vector2D'
+import VectorNode from './classes/VectorNode'
 
 const canvasHandler = new CanvasHandler({
   dimensions: {
@@ -13,8 +14,8 @@ const canvasHandler = new CanvasHandler({
 
 const grid = GridFactory.create({
   dimensions: {
-    width: 20,
-    height: 20
+    width: 30,
+    height: 30
   },
   canvasSize: canvasHandler.getDimensions()
 })
@@ -23,13 +24,19 @@ const mouse = new MouseState
 
 const currentStates = {
   draw: 0,
-  createPaths: false
+  createPaths: false,
+  pathFound: false
 }
 
-const paths: Vector2D[][] = []
-const tempPaths: Vector2D[][] = []
+const startVec = new Vector2D({x: 1, y: 1})
 
-paths.push([new Vector2D({x: 1, y: 1})])
+const linkedList: VectorNode[] = [] 
+
+
+// const paths: Vector2D[][] = []
+// const tempPaths: Vector2D[][] = []
+
+linkedList.push(new VectorNode(startVec, null))
 
 
 function animate() :void {
@@ -39,11 +46,13 @@ function animate() :void {
     editBoxes()
   }
 
-  if (currentStates.createPaths) {
+  if (currentStates.createPaths && !currentStates.pathFound) {
     createNextStep()
-    console.log(paths)
+    // console.log(paths)
     currentStates.createPaths = false
   }
+
+  
 
   grid.drawLines(canvasHandler.getCtx())
   grid.drawBoxes(canvasHandler.getCtx())
@@ -62,41 +71,99 @@ function editBoxes() {
 }
 
 function createNextStep() {
-  paths.forEach(path1 => {
-    const path2 = [...path1]
-    const path3 = [...path1]
-    const path4 = [...path1]
+  
 
-    checkDirection(path1, new Vector2D({x: 0, y: -1}))
-    if (checkDirection(path2, new Vector2D({x: 1, y: 0}))) tempPaths.push(path2)
-    if (checkDirection(path3, new Vector2D({x: 0, y: 1}))) tempPaths.push(path3)
-    if (checkDirection(path4, new Vector2D({x: -1, y: 0}))) tempPaths.push(path4)
+  linkedList.forEach(node => {
+    if (!node.end || currentStates.pathFound) return
+
+    checkDirection(node, Vector2D.add(node.value, {x: 0, y: -1}))
+    checkDirection(node, Vector2D.add(node.value, {x: 1, y: 0}))
+    checkDirection(node, Vector2D.add(node.value, {x: 0, y: 1}))
+    checkDirection(node, Vector2D.add(node.value, {x: -1, y: 0}))
+    
+    node.end = false
   })
+  // paths.forEach(path1 => {
+  //   const path2 = [...path1]
+  //   const path3 = [...path1]
+  //   const path4 = [...path1]
 
-  paths.push(...tempPaths)
-  tempPaths.length = 0
+  //   checkDirection(path1, new Vector2D({x: 0, y: -1}))
+  //   if (checkDirection(path2, new Vector2D({x: 1, y: 0}))) tempPaths.push(path2)
+  //   if (checkDirection(path3, new Vector2D({x: 0, y: 1}))) tempPaths.push(path3)
+  //   if (checkDirection(path4, new Vector2D({x: -1, y: 0}))) tempPaths.push(path4)
+  // })
+
+  // paths.push(...tempPaths)
+  // tempPaths.length = 0
+
+  trimLinkedList(linkedList)
 }
 
-function checkDirection(path: Vector2D[], direction: Vector2D): boolean {
-  const last = path[path.length - 1].copy()
-  const next = last.add(direction)
+function checkDirection(lastNode: VectorNode, direction: Vector2D): boolean {
+  // const last = path[path.length - 1].copy()
+  // const next = last.add(direction)
 
-  if (checkPosition(next)) {
-    path.push(next)
-    grid.set(next.x, next.y, 4)
+  const nextPosition = checkPosition(direction)
+
+  if (nextPosition === 1) {
+    linkedList.push(new VectorNode(direction, lastNode))
+
+    grid.set(direction.x, direction.y, 4)
     return true
+  } else if (nextPosition === 2) {
+    console.log('win')
+    currentStates.pathFound = true
+
+    let counter = 0
+
+    while (lastNode.lastNode !== null) {
+      counter++
+      grid.set(lastNode.value.x, lastNode.value.y, 5)
+      lastNode = lastNode.lastNode
+    }
+    console.log(counter)
   }
 
   return false
 }
 
-function checkPosition(position: Vector2D): boolean {
+function checkPosition(position: Vector2D): number {
   if (
     position.x < 1 || position.x > grid.dimensions.width ||
     position.y < 1 || position.y > grid.dimensions.height
-  ) return false
+  ) return 0
+
   
-  return grid.get(position.x, position.y).type === 0
+  if (grid.get(position.x, position.y).type === 0) return 1
+  if (grid.get(position.x, position.y).type === 3) return 2
+
+  return 0
+}
+
+function trimLinkedList(list: VectorNode[]) {
+  for (let i = list.length - 1; i >= 0; i--) {
+    if (!list[i].end && list[i].numDescendants === 0) {
+      list[i].delete()
+      list.splice(i, 1)
+    }
+  }
+}
+
+function clearPath() {
+  for (let i = 1; i <= grid.dimensions.width; i++) {
+    for (let j = 1; j <= grid.dimensions.height; j++) {
+      const type = grid.get(i, j).type
+      if (type === 4 || type === 5) {
+        grid.set(i, j, 0)
+      }
+    }
+  }
+}
+
+function resetLinkedList() {
+  linkedList.length = 0
+  linkedList.push(new VectorNode(startVec, null))
 }
 
 animate()
@@ -131,6 +198,15 @@ document.addEventListener('keypress', e => {
     // startPathFind()
 
     currentStates.createPaths = !currentStates.createPaths
+  } else if (e.key === 'a') {
+    linkedList[linkedList.length - 1].delete()
+    linkedList.splice(linkedList.length - 1, 1)
+  } else if (e.key === 'd') {
+    console.log(linkedList)
+  } else if (e.key === 'c') {
+    clearPath()
+    resetLinkedList()
+    currentStates.pathFound = false
   }
 })
 
