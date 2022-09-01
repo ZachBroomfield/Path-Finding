@@ -1,6 +1,8 @@
 import GridLine from './GridLine'
 import Vector2D from './Vector2D'
 import GridBoxes from './GridBoxes'
+import State from './State'
+import { BoxType } from './Box'
 
 interface Dimensions {
   width: number
@@ -64,26 +66,18 @@ export default class Grid {
       for (let j = 1; j <= this.dimensions.height; j++) {
         const box = this.boxes.get(i, j)
         if (box.type > 0) {
-          ctx.beginPath()
-          ctx.lineWidth = 0
-          ctx.fillStyle = box.getColour()
-          ctx.fillRect(
-            this.topLeft.x + ((i - 1) * this.spacing) + 1,
-            this.topLeft.y + ((j - 1) * this.spacing) + 1,
-            this.spacing - 2,
-            this.spacing - 2
+          box.draw(
+            ctx,
+            {
+              x: this.topLeft.x + ((i - 1) * this.spacing) + 1,
+              y: this.topLeft.y + ((j - 1) * this.spacing) + 1
+            },
+              this.spacing
           )
         }
       }
     }
   }
-
-  // toggleBox(position: Point) {
-  //   const coord = this.positionToCoord(position)
-  //   if (coord !== null) {
-  //     this.boxes.toggle(coord.x, coord.y)
-  //   }
-  // }
 
   get(x: number, y: number): {type: number} {
     return this.boxes.get(x, y)
@@ -93,8 +87,82 @@ export default class Grid {
     this.boxes.set(x, y, value)
   }
 
+  editGrid(state: State) {
+    const coord = this.positionToCoord({x: state.mouse.x, y: state.mouse.y})
+    if (coord !== null) {
+      const box = this.get(coord.x, coord.y)
+      if (box.type !== state.drawType && box.type !== 2 && box.type !== 3) {
+        if (state.drawType === BoxType.Start) {
+          this.#removeOldStart()
+        }
+        if (state.drawType === BoxType.End) {
+          this.#removeOldEnd()
+        }
+        this.set(coord.x, coord.y, state.drawType)
+      }
+    }
+  }
+
+  clearPath() {
+    for (let i = 1; i <= this.dimensions.width; i++) {
+      for (let j = 1; j <= this.dimensions.height; j++) {
+        const type = this.get(i, j).type
+        if (type === 4 || type === 5) {
+          this.set(i, j, 0)
+        }
+      }
+    }
+  }
+
+  clearAll() {
+    for (let i = 1; i <= this.dimensions.width; i++) {
+      for (let j = 1; j <= this.dimensions.height; j++) {
+        const type = this.get(i, j).type
+        if (type === 1 || type === 4 || type === 5) {
+          this.set(i, j, 0)
+        }
+      }
+    }
+  }
+
+  start(): Vector2D {
+    for (let i = 1; i <= this.dimensions.width; i++) {
+      for (let j = 1; j <= this.dimensions.height; j++) {
+        if (this.get(i, j).type === BoxType.Start) {
+          return new Vector2D(i, j)
+        }
+      }
+    }
+
+    throw "No Start Position"
+    // return new Vector2D(1, 1)
+  }
+
+  #end(): Vector2D {
+    for (let i = 1; i <= this.dimensions.width; i++) {
+      for (let j = 1; j <= this.dimensions.height; j++) {
+        if (this.get(i, j).type === BoxType.End) {
+          return new Vector2D(i, j)
+        }
+      }
+    }
+
+    throw "No Start Position"
+    // return new Vector2D(1, 1)
+  }
+
   #setStartAndEnd() {
     this.boxes.set(1, 1, 2)
     this.boxes.set(this.dimensions.width, this.dimensions.height, 3)
+  }
+
+  #removeOldStart() {
+    const oldStart = this.start()
+    this.set(oldStart.x, oldStart.y, BoxType.Blank)
+  }
+
+  #removeOldEnd() {
+    const oldEnd = this.#end()
+    this.set(oldEnd.x, oldEnd.y, BoxType.Blank)
   }
 }

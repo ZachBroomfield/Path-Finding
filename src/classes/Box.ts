@@ -1,4 +1,4 @@
-enum BoxType {
+export enum BoxType {
   Blank,
   Barrier,
   Start,
@@ -12,6 +12,19 @@ export default class Box {
 
   constructor(type: BoxType = BoxType.Blank) {
     this.type = type
+  }
+
+  draw(ctx: CanvasRenderingContext2D, topLeft: {x: number, y: number}, spacing: number) {
+    ctx.beginPath()
+    ctx.lineWidth = 0
+    ctx.fillStyle = this.getColour()
+    ctx.fillRect(
+      topLeft.x,
+      topLeft.y,
+      spacing - 2,
+      spacing - 2
+    )
+    ctx.stroke()
   }
 
   getColour(): string {
