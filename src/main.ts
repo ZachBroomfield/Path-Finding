@@ -109,9 +109,9 @@ document.addEventListener('mousemove', e => {
   state.updateMousePosition(e)
 })
 
-document.addEventListener('keypress', e => {
-  // debug only
-  if (e.key === 'd') {
-    console.log(list.list)
-  }
-})
+// document.addEventListener('keypress', e => {
+//   // debug only
+//   if (e.key === 'd') {
+//     console.log(list.list)
+//   }
+// })
