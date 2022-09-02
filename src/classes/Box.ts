@@ -31,16 +31,19 @@ export default class Box {
     switch(this.type) {
       case(BoxType.Start):
         return 'green'
-        break
+
       case(BoxType.End):
         return 'red'
-        break
+
       case(BoxType.Path):
         return 'blue'
-        break
+
       case(BoxType.Success):
         return 'gold'
-        break
+
+      case(BoxType.Blank):
+        return 'lightgray'
+        
       default:
         return 'black'
     }

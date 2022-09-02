@@ -97,7 +97,7 @@ export default class ButtonSetup {
           x: canvasDimensions.width - 240,
           y: canvasDimensions.height / 2 + 30
         }),
-        text: 'Place start',
+        text: 'Place Start',
         fillColour: 'green',
         selected: true,
         action: function() {
@@ -131,7 +131,7 @@ export default class ButtonSetup {
           x: canvasDimensions.width - 240,
           y: canvasDimensions.height / 2 + 90
         }),
-        text: 'Place end',
+        text: 'Place End',
         fillColour: 'red',
         selected: false,
         action: function() {
@@ -165,7 +165,7 @@ export default class ButtonSetup {
           x: canvasDimensions.width - 240,
           y: canvasDimensions.height / 2 + 150
         }),
-        text: 'Draw barriers',
+        text: 'Draw Barriers',
         fillColour: 'gray',
         selected: false,
         action: function() {

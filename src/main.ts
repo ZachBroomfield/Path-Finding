@@ -21,8 +21,8 @@ const canvasHandler = new CanvasHandler({
 
 const grid = GridFactory.create({
   dimensions: {
-    width: 50,
-    height: 30
+    width: 30,
+    height: 20
   },
   canvasSize: {
     width: canvasHandler.getDimensions().width - 250,
@@ -35,6 +35,14 @@ const list = new VectorArray(grid.dimensions)
 // const list = new VectorLinkedList
 
 const buttons: Button[] = ButtonSetup.setup(canvasHandler.getDimensions(), state)
+
+function initialDraw() {
+  grid.drawLines(canvasHandler.getCtx())
+  // grid.drawBoxes(canvasHandler.getCtx())
+  buttons.forEach(button => {
+    button.draw(canvasHandler.getCtx())
+  })
+}
 
 function animate() {
 
@@ -55,7 +63,8 @@ function animate() {
   }
 
   if (state.frame % 5 === 0) {
-    canvasHandler.clear()
+    // const timeOne = Date.now()
+    // canvasHandler.clear()
 
     if (state.createPath) {
       if (list.pathFound) {
@@ -70,12 +79,17 @@ function animate() {
       // state.createPath = false
     }
   
-    grid.drawLines(canvasHandler.getCtx())
-    grid.drawBoxes(canvasHandler.getCtx())
+    // grid.drawLines(canvasHandler.getCtx())
+    // grid.drawBoxes(canvasHandler.getCtx())
+    grid.drawChanged(canvasHandler.getCtx())
   
     buttons.forEach(button => {
       button.draw(canvasHandler.getCtx())
     })
+
+    // const timeTwo = Date.now()
+
+    // console.log(timeTwo - timeOne)
   }
 
   state.incrementFrame()
@@ -102,6 +116,7 @@ function handleMouseClick() {
   }
 }
 
+initialDraw()
 animate()
 
 document.addEventListener('mousedown', () => {

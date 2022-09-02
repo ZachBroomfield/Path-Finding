@@ -47,6 +47,7 @@ export default class VectorArray {
   reset() {
     this.list = new Array2D(this.#size, null)
     this.pathFound = false
+    this.#currentEnds.length = 0
     this.#started = false
   }
 

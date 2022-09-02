@@ -2,7 +2,7 @@ import GridLine from './GridLine'
 import Vector2D from './Vector2D'
 import GridBoxes from './GridBoxes'
 import State from './State'
-import { BoxType } from './Box'
+import Box, { BoxType } from './Box'
 
 interface Dimensions {
   width: number
@@ -31,6 +31,7 @@ export default class Grid {
   spacing: number
   coordToPosition: (arg: Point) => Point
   positionToCoord: (arg: Point) => Point | null
+  changed: Point[]
 
   constructor(params: ConstructionParams) {
     this.dimensions = params.dimensions
@@ -40,6 +41,7 @@ export default class Grid {
     this.coordToPosition = params.coordToPosition
     this.positionToCoord = params.positionToCoord
     this.boxes = new GridBoxes(this.dimensions) //should this be part of grid factory?
+    this.changed = []
     this.#setStartAndEnd() //should this be part of grid factory?
   }
 
@@ -61,30 +63,56 @@ export default class Grid {
     })
   }
 
-  drawBoxes(ctx: CanvasRenderingContext2D) {
-    for (let i = 1; i <= this.dimensions.width; i++) {
-      for (let j = 1; j <= this.dimensions.height; j++) {
-        const box = this.boxes.get(i, j)
-        if (box.type > 0) {
-          box.draw(
-            ctx,
-            {
-              x: this.topLeft.x + ((i - 1) * this.spacing) + 1,
-              y: this.topLeft.y + ((j - 1) * this.spacing) + 1
-            },
-              this.spacing
-          )
-        }
-      }
-    }
-  }
+  // drawBoxes(ctx: CanvasRenderingContext2D) {
+  //   for (let i = 1; i <= this.dimensions.width; i++) {
+  //     for (let j = 1; j <= this.dimensions.height; j++) {
+  //       const box = this.boxes.get(i, j)
+  //       if (box.type > 0) {
+  //         box.draw(
+  //           ctx,
+  //           {
+  //             x: this.topLeft.x + ((i - 1) * this.spacing) + 1,
+  //             y: this.topLeft.y + ((j - 1) * this.spacing) + 1
+  //           },
+  //             this.spacing
+  //         )
+  //       }
+  //     }
+  //   }
+  // }
 
-  get(x: number, y: number): {type: number} {
+  get(x: number, y: number): Box {
     return this.boxes.get(x, y)
   }
 
   set(x: number, y: number, value: number) {
     this.boxes.set(x, y, value)
+    this.changed.push({x, y})
+    // this.boxes.get(x, y).draw(
+    //   this.ctx,
+    //   {
+    //     x: this.topLeft.x + ((x - 1) * this.spacing) + 1,
+    //     y: this.topLeft.y + ((y - 1) * this.spacing) + 1
+    //   },
+    //     this.spacing
+    // )
+  }
+
+  drawChanged(ctx: CanvasRenderingContext2D) {
+    this.changed.forEach(point => {
+      const box = this.boxes.get(point.x, point.y)
+      box.draw(
+        ctx,
+        {
+          x: this.topLeft.x + ((point.x - 1) * this.spacing) + 1,
+          y: this.topLeft.y + ((point.y - 1) * this.spacing) + 1
+        },
+          this.spacing
+      )
+    })
+
+    this.changed.length = 0
+
   }
 
   editGrid(state: State) {
@@ -153,7 +181,10 @@ export default class Grid {
 
   #setStartAndEnd() {
     this.boxes.set(1, 1, 2)
+    this.changed.push({x: 1, y: 1})
+
     this.boxes.set(this.dimensions.width, this.dimensions.height, 3)
+    this.changed.push({x: this.dimensions.width, y: this.dimensions.height})
   }
 
   #removeOldStart() {
