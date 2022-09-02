@@ -3,7 +3,13 @@ import ButtonSetup from './classes/ButtonSetup'
 import CanvasHandler from './classes/CanvasHandler'
 import GridFactory from './classes/GridFactory'
 import State from './classes/State'
-import VectorLinkedList from './classes/VectorLinkedList'
+
+//both breadth first searching
+import VectorArray from './classes/VectorArray'
+// import VectorLinkedList from './classes/VectorLinkedList'
+
+//todo: implement different pathfinding algorithms
+//      make drawing squares more efficient 
 
 const canvasHandler = new CanvasHandler({
   dimensions: {
@@ -25,7 +31,8 @@ const grid = GridFactory.create({
 })
 
 const state = new State
-const list = new VectorLinkedList
+const list = new VectorArray(grid.dimensions)
+// const list = new VectorLinkedList
 
 const buttons: Button[] = ButtonSetup.setup(canvasHandler.getDimensions(), state)
 

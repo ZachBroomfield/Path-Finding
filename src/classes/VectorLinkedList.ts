@@ -44,7 +44,7 @@ export default class VectorLinkedList {
     }
   }
 
-  #checkDirection(grid: Grid, lastNode: VectorNode, direction: Vector2D): boolean {
+  #checkDirection(grid: Grid, lastNode: VectorNode, direction: Vector2D) {
   
     const nextPosition = this.#checkPosition(grid, direction)
   
@@ -52,7 +52,7 @@ export default class VectorLinkedList {
       this.list.push(new VectorNode(direction, lastNode))
   
       grid.set(direction.x, direction.y, 4)
-      return true
+      return
     } else if (nextPosition === 2) {
       console.log('win')
       this.pathFound = true
@@ -66,8 +66,6 @@ export default class VectorLinkedList {
       }
       console.log(counter)
     }
-  
-    return false
   }
 
   #checkPosition(grid :Grid, position: Vector2D): number {
