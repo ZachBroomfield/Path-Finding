@@ -65,7 +65,11 @@ export default class Button {
     ctx.font = '30px Arial'
     ctx.fillStyle = 'black'
     ctx.textAlign = 'center'
-    ctx.fillText(this.text, this.position.x + (this.size.width / 2), this.position.y + (this.size.height * 0.7))
+    ctx.fillText(
+      this.text,
+      this.position.x + (this.size.width / 2),
+      this.position.y + (this.size.height * 0.7)
+    )
   }
 
   checkClick(mouse: {x: number, y: number}) {

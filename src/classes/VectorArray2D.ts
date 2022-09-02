@@ -7,7 +7,7 @@ interface Dimensions {
   height: number
 }
 
-export default class VectorArray {
+export default class VectorArray2D {
   list: Array2D
   pathFound: boolean
   #started: boolean
@@ -24,7 +24,7 @@ export default class VectorArray {
 
   createNextStep(grid: Grid) {
     if (!this.#started) {
-      const start = grid.start()
+      const start = grid.getStart()
       this.list.set(start.x - 1, start.y - 1, 1)
       this.#currentEnds.push(start)
       this.#started = true
@@ -35,10 +35,21 @@ export default class VectorArray {
     this.#currentEnds.forEach(vector => {
       if (this.pathFound) return
 
-      this.#checkDirection(grid, vector.copy(), Vector2D.add(vector, {x: 0, y: -1}), tempEnds)
-      this.#checkDirection(grid, vector.copy(), Vector2D.add(vector, {x: 1, y: 0}), tempEnds)
-      this.#checkDirection(grid, vector.copy(), Vector2D.add(vector, {x: 0, y: 1}), tempEnds)
-      this.#checkDirection(grid, vector.copy(), Vector2D.add(vector, {x: -1, y: 0}), tempEnds)
+      this.#checkDirection(
+        grid, vector.copy(), Vector2D.add(vector, {x: 0, y: -1}), tempEnds
+      )
+
+      this.#checkDirection(
+        grid, vector.copy(), Vector2D.add(vector, {x: 1, y: 0}), tempEnds
+      )
+
+      this.#checkDirection(
+        grid, vector.copy(), Vector2D.add(vector, {x: 0, y: 1}), tempEnds
+      )
+
+      this.#checkDirection(
+        grid, vector.copy(), Vector2D.add(vector, {x: -1, y: 0}), tempEnds
+      )
     })
 
     this.#currentEnds = tempEnds
@@ -51,7 +62,12 @@ export default class VectorArray {
     this.#started = false
   }
 
-  #checkDirection(grid: Grid, last: Vector2D, direction: Vector2D, tempEnds: Vector2D[]) {
+  #checkDirection(
+    grid: Grid,
+    last: Vector2D,
+    direction: Vector2D,
+    tempEnds: Vector2D[]
+  ) {
     const nextPosition = this.#checkPosition(grid, direction)
   
     if (nextPosition === 1) {
@@ -82,7 +98,6 @@ export default class VectorArray {
       position.y < 1 || position.y > grid.dimensions.height
     ) return 0
   
-    
     if (grid.get(position.x, position.y).type === 0) return 1
     if (grid.get(position.x, position.y).type === 3) return 2
   

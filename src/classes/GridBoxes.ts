@@ -20,8 +20,4 @@ export default class GridBoxes {
   set(x: number, y: number, value: number ) {
     this.boxes.set(x - 1, y - 1, new Box(value))
   }
-
-  // toggle(x: number, y: number) {
-  //   this.boxes.set(x - 1, y - 1, !this.get(x, y))
-  // }
 }

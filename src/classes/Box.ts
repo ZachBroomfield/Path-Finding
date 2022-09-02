@@ -7,6 +7,11 @@ export enum BoxType {
   Success
 }
 
+interface Point {
+  x: number
+  y: number
+}
+
 export default class Box {
   type: BoxType
 
@@ -14,7 +19,7 @@ export default class Box {
     this.type = type
   }
 
-  draw(ctx: CanvasRenderingContext2D, topLeft: {x: number, y: number}, spacing: number) {
+  draw(ctx: CanvasRenderingContext2D, topLeft: Point, spacing: number) {
     ctx.beginPath()
     ctx.lineWidth = 0
     ctx.fillStyle = this.getColour()

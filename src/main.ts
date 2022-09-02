@@ -3,7 +3,7 @@ import ButtonSetup from './classes/ButtonSetup'
 import CanvasHandler from './classes/CanvasHandler'
 import GridFactory from './classes/GridFactory'
 import State from './classes/State'
-import VectorArray from './classes/VectorArray'
+import VectorArray2D from './classes/VectorArray2D'
 
 const canvasHandler = new CanvasHandler({
   dimensions: {
@@ -25,9 +25,10 @@ const grid = GridFactory.create({
 })
 
 const state = new State
-const list = new VectorArray(grid.dimensions)
+const list = new VectorArray2D(grid.dimensions)
 
-const buttons: Button[] = ButtonSetup.setup(canvasHandler.getDimensions(), state)
+const buttons: Button[] =
+  ButtonSetup.setup(canvasHandler.getDimensions(), state)
 
 function initialDraw() {
   grid.drawLines(canvasHandler.getCtx())

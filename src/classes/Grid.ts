@@ -18,6 +18,7 @@ interface ConstructionParams {
   dimensions: Dimensions
   topLeft: Vector2D
   gridLines: GridLine[]
+  boxes: GridBoxes
   spacing: number
   coordToPosition: (arg: Point) => Point
   positionToCoord: (arg: Point) => Point | null
@@ -38,20 +39,17 @@ export default class Grid {
     this.topLeft = params.topLeft
     this.gridLines = params.gridLines
     this.spacing = params.spacing
+    this.boxes = params.boxes
     this.coordToPosition = params.coordToPosition
     this.positionToCoord = params.positionToCoord
-    this.boxes = new GridBoxes(this.dimensions) //should this be part of grid factory?
+
     this.changed = []
-    this.#setStartAndEnd() //should this be part of grid factory?
+    this.#setStartAndEnd()
   }
 
   drawLines(ctx: CanvasRenderingContext2D) {
     this.#drawGridLines(ctx)
   }
-
-  // getSpacing(): number {
-  //   return this.spacing
-  // }
 
   #drawGridLines(ctx: CanvasRenderingContext2D) {
     ctx.strokeStyle = 'gray'
@@ -63,24 +61,6 @@ export default class Grid {
     })
   }
 
-  // drawBoxes(ctx: CanvasRenderingContext2D) {
-  //   for (let i = 1; i <= this.dimensions.width; i++) {
-  //     for (let j = 1; j <= this.dimensions.height; j++) {
-  //       const box = this.boxes.get(i, j)
-  //       if (box.type > 0) {
-  //         box.draw(
-  //           ctx,
-  //           {
-  //             x: this.topLeft.x + ((i - 1) * this.spacing) + 1,
-  //             y: this.topLeft.y + ((j - 1) * this.spacing) + 1
-  //           },
-  //             this.spacing
-  //         )
-  //       }
-  //     }
-  //   }
-  // }
-
   get(x: number, y: number): Box {
     return this.boxes.get(x, y)
   }
@@ -88,14 +68,6 @@ export default class Grid {
   set(x: number, y: number, value: number) {
     this.boxes.set(x, y, value)
     this.changed.push({x, y})
-    // this.boxes.get(x, y).draw(
-    //   this.ctx,
-    //   {
-    //     x: this.topLeft.x + ((x - 1) * this.spacing) + 1,
-    //     y: this.topLeft.y + ((y - 1) * this.spacing) + 1
-    //   },
-    //     this.spacing
-    // )
   }
 
   drawChanged(ctx: CanvasRenderingContext2D) {
@@ -112,7 +84,6 @@ export default class Grid {
     })
 
     this.changed.length = 0
-
   }
 
   editGrid(state: State) {
@@ -153,7 +124,7 @@ export default class Grid {
     }
   }
 
-  start(): Vector2D {
+  getStart(): Vector2D {
     for (let i = 1; i <= this.dimensions.width; i++) {
       for (let j = 1; j <= this.dimensions.height; j++) {
         if (this.get(i, j).type === BoxType.Start) {
@@ -163,10 +134,9 @@ export default class Grid {
     }
 
     throw "No Start Position"
-    // return new Vector2D(1, 1)
   }
 
-  #end(): Vector2D {
+  #getEnd(): Vector2D {
     for (let i = 1; i <= this.dimensions.width; i++) {
       for (let j = 1; j <= this.dimensions.height; j++) {
         if (this.get(i, j).type === BoxType.End) {
@@ -175,8 +145,7 @@ export default class Grid {
       }
     }
 
-    throw "No Start Position"
-    // return new Vector2D(1, 1)
+    throw "No End Position"
   }
 
   #setStartAndEnd() {
@@ -188,12 +157,12 @@ export default class Grid {
   }
 
   #removeOldStart() {
-    const oldStart = this.start()
+    const oldStart = this.getStart()
     this.set(oldStart.x, oldStart.y, BoxType.Blank)
   }
 
   #removeOldEnd() {
-    const oldEnd = this.#end()
+    const oldEnd = this.#getEnd()
     this.set(oldEnd.x, oldEnd.y, BoxType.Blank)
   }
 }

@@ -18,7 +18,10 @@ export default class CanvasHandler {
     this.canvas = document.getElementById(params.id) as HTMLCanvasElement
     this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D
 
-    this.#setCanvasSize({width: params.dimensions.width, height: params.dimensions.height})
+    this.#setCanvasSize({
+      width: params.dimensions.width,
+      height: params.dimensions.height
+    })
   }
 
   getCtx(): CanvasRenderingContext2D {

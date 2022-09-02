@@ -1,4 +1,5 @@
 import Grid from './Grid.js'
+import GridBoxes from './GridBoxes.js'
 import GridLine from './GridLine.js'
 import Vector2D from './Vector2D.js'
 
@@ -33,14 +34,29 @@ export default class GridFactory {
 
     const gridLines = this.#createGridLines(dimensions, spacing, topLeft)
 
+    const boxes = new GridBoxes(dimensions)
+
     const coordToPosition = this.#generateCoordToPosition(spacing, topLeft)
 
-    const positionToCoord = this.#generatePositionToCoord(spacing, topLeft, dimensions)
+    const positionToCoord =
+      this.#generatePositionToCoord(spacing, topLeft, dimensions)
 
-    return new Grid({dimensions, topLeft, gridLines, spacing, coordToPosition, positionToCoord})
+    return new Grid({
+      dimensions,
+      topLeft,
+      gridLines,
+      boxes,
+      spacing,
+      coordToPosition,
+      positionToCoord
+    })
   }
 
-  static #generateCoordToPosition(spacing: number, topLeft: Vector2D): (arg: Point) => Point {
+  static #generateCoordToPosition(
+    spacing: number,
+    topLeft: Vector2D
+    ): (arg: Point) => Point {
+
     const offset = (spacing) / 2
 
     return (coordinates: Point) => {
@@ -51,10 +67,16 @@ export default class GridFactory {
     }
   }
 
-  static #generatePositionToCoord(spacing: number, topLeft: Vector2D, dimensions: Dimensions): (arg: Point) => Point | null {
+  static #generatePositionToCoord(
+    spacing: number,
+    topLeft: Vector2D,
+    dimensions: Dimensions
+  ): (arg: Point) => Point | null {
     
     return (position: Point) => {
-      if (!this.#checkPositionInBounds(position, topLeft, dimensions, spacing)) return null
+      if (!this.#checkPosInBounds(position, topLeft, dimensions, spacing)) {
+        return null
+      }
 
       return {
         x: Math.ceil((position.x - topLeft.x) / spacing),
@@ -63,7 +85,12 @@ export default class GridFactory {
     }
   }
 
-  static #checkPositionInBounds(position: Point, topLeft: Point, dimensions: Dimensions, spacing: number) {
+  static #checkPosInBounds(
+    position: Point,
+    topLeft: Point,
+    dimensions: Dimensions,
+    spacing: number
+  ) {
     return (
       position.x > topLeft.x &&
       position.y > topLeft.y &&
@@ -83,26 +110,39 @@ export default class GridFactory {
     return new Vector2D(canvasSize.width / 2, canvasSize.height / 2)
   }
 
-  static #calcSpacing(dimensions: Dimensions, canvasSize: Dimensions, scale: number = 1): number {
-    const maxWidth = Math.floor(canvasSize.width * scale)
-    const maxHeight = Math.floor(canvasSize.height * scale)
+  static #calcSpacing(
+    dimensions: Dimensions,
+    canvasSize: Dimensions,
+    scale: number = 1
+  ): number {
 
-    const widthSpacing = Math.floor((maxWidth - dimensions.width) / dimensions.width)
-    const heightSpacing = Math.floor((maxHeight - dimensions.height) / dimensions.height)
+    const maxW = Math.floor(canvasSize.width * scale)
+    const maxH = Math.floor(canvasSize.height * scale)
+    const wSpacing = Math.floor((maxW - dimensions.width) / dimensions.width)
+    const hSpacing = Math.floor((maxH - dimensions.height) / dimensions.height)
 
-    return Math.min(widthSpacing, heightSpacing)
+    return Math.min(wSpacing, hSpacing)
   }
 
-  static #calcTopLeft(dimensions: Dimensions, spacing: number, midPoint: Vector2D): Vector2D {
+  static #calcTopLeft(
+    dimensions: Dimensions,
+    spacing: number,
+    midPoint: Vector2D
+  ): Vector2D {
+
     return new Vector2D({
       x: Math.round(midPoint.x - (dimensions.width * spacing) / 2),
       y: Math.round(midPoint.y - (dimensions.height * spacing) / 2)
     })
   }
 
-  static #createGridLines(dimensions: Dimensions, spacing: number, topLeft: Vector2D): GridLine[] {
+  static #createGridLines(
+    dimensions: Dimensions,
+    spacing: number,
+    topLeft: Vector2D
+  ): GridLine[] {
+    
     const gridLines: GridLine[] = []
-
     const height = this.#calcHeight(dimensions, spacing)
     const width = this.#calcWidth(dimensions, spacing)
 

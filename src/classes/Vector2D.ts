@@ -19,7 +19,6 @@ export default class Vector2D {
     } else {
       throw new Error("Incorrect Vector2D parameters provided")
     }
-
   }
 
   add(vec: Point): Vector2D {
