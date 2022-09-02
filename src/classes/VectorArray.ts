@@ -25,7 +25,7 @@ export default class VectorArray {
   createNextStep(grid: Grid) {
     if (!this.#started) {
       const start = grid.start()
-      this.list.set(start.x - 1, start.y - 1, "START")
+      this.list.set(start.x - 1, start.y - 1, 1)
       this.#currentEnds.push(start)
       this.#started = true
     }
@@ -67,7 +67,7 @@ export default class VectorArray {
       let counter = 0
   
       let value = last
-      while (this.list.get(value.x - 1, value.y - 1) !== "START") {
+      while (this.list.get(value.x - 1, value.y - 1) !== 1) {
         counter++
         grid.set(value.x, value.y, 5)
         value = this.list.get(value.x - 1, value.y - 1)
