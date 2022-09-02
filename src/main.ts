@@ -3,13 +3,7 @@ import ButtonSetup from './classes/ButtonSetup'
 import CanvasHandler from './classes/CanvasHandler'
 import GridFactory from './classes/GridFactory'
 import State from './classes/State'
-
-//both breadth first searching
 import VectorArray from './classes/VectorArray'
-// import VectorLinkedList from './classes/VectorLinkedList'
-
-//todo: implement different pathfinding algorithms
-//      make drawing squares more efficient 
 
 const canvasHandler = new CanvasHandler({
   dimensions: {
@@ -32,13 +26,11 @@ const grid = GridFactory.create({
 
 const state = new State
 const list = new VectorArray(grid.dimensions)
-// const list = new VectorLinkedList
 
 const buttons: Button[] = ButtonSetup.setup(canvasHandler.getDimensions(), state)
 
 function initialDraw() {
   grid.drawLines(canvasHandler.getCtx())
-  // grid.drawBoxes(canvasHandler.getCtx())
   buttons.forEach(button => {
     button.draw(canvasHandler.getCtx())
   })
@@ -63,8 +55,6 @@ function animate() {
   }
 
   if (state.frame % 5 === 0) {
-    // const timeOne = Date.now()
-    // canvasHandler.clear()
 
     if (state.createPath) {
       if (list.pathFound) {
@@ -75,21 +65,13 @@ function animate() {
       } else {
         list.createNextStep(grid)
       }
-      
-      // state.createPath = false
     }
-  
-    // grid.drawLines(canvasHandler.getCtx())
-    // grid.drawBoxes(canvasHandler.getCtx())
+
     grid.drawChanged(canvasHandler.getCtx())
   
     buttons.forEach(button => {
       button.draw(canvasHandler.getCtx())
     })
-
-    // const timeTwo = Date.now()
-
-    // console.log(timeTwo - timeOne)
   }
 
   state.incrementFrame()
@@ -130,10 +112,3 @@ document.addEventListener('mouseup', () => {
 document.addEventListener('mousemove', e => {
   state.updateMousePosition(e)
 })
-
-// document.addEventListener('keypress', e => {
-//   // debug only
-//   if (e.key === 'd') {
-//     console.log(list.list)
-//   }
-// })
