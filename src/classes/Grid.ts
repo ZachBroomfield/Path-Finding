@@ -51,16 +51,6 @@ export default class Grid {
     this.#drawGridLines(ctx)
   }
 
-  #drawGridLines(ctx: CanvasRenderingContext2D) {
-    ctx.strokeStyle = 'gray'
-    this.gridLines.forEach(line => {
-      ctx.beginPath()
-      ctx.moveTo(line.start.x, line.start.y)
-      ctx.lineTo(line.end.x, line.end.y)
-      ctx.stroke()
-    })
-  }
-
   get(x: number, y: number): Box {
     return this.boxes.get(x, y)
   }
@@ -102,12 +92,30 @@ export default class Grid {
     }
   }
 
+  randomiseBarriers(weighting: number) {
+    this.clearAll()
+    
+    for (let i = 1; i <= this.dimensions.width; i++) {
+      for (let j = 1; j <= this.dimensions.height; j++) {
+        const type = this.get(i, j).type
+        if (type === BoxType.Start || type === BoxType.End) continue
+
+        const rand = Math.random()
+        if (rand < weighting) {
+          this.set(i, j, BoxType.Blank)
+        } else {
+          this.set(i, j, BoxType.Barrier)
+        }
+      }
+    }
+  }
+
   clearPath() {
     for (let i = 1; i <= this.dimensions.width; i++) {
       for (let j = 1; j <= this.dimensions.height; j++) {
         const type = this.get(i, j).type
-        if (type === 4 || type === 5) {
-          this.set(i, j, 0)
+        if (type === BoxType.Path || type === BoxType.Success) {
+          this.set(i, j, BoxType.Blank)
         }
       }
     }
@@ -117,8 +125,12 @@ export default class Grid {
     for (let i = 1; i <= this.dimensions.width; i++) {
       for (let j = 1; j <= this.dimensions.height; j++) {
         const type = this.get(i, j).type
-        if (type === 1 || type === 4 || type === 5) {
-          this.set(i, j, 0)
+        if (
+          type === BoxType.Barrier ||
+          type === BoxType.Path ||
+          type === BoxType.Success
+        ) {
+          this.set(i, j, BoxType.Blank)
         }
       }
     }
@@ -136,6 +148,20 @@ export default class Grid {
     throw "No Start Position"
   }
 
+  resetChanged() {
+    this.changed.length = 0
+  }
+
+  #drawGridLines(ctx: CanvasRenderingContext2D) {
+    ctx.strokeStyle = 'gray'
+    this.gridLines.forEach(line => {
+      ctx.beginPath()
+      ctx.moveTo(line.start.x, line.start.y)
+      ctx.lineTo(line.end.x, line.end.y)
+      ctx.stroke()
+    })
+  }
+
   #getEnd(): Vector2D {
     for (let i = 1; i <= this.dimensions.width; i++) {
       for (let j = 1; j <= this.dimensions.height; j++) {
@@ -149,11 +175,18 @@ export default class Grid {
   }
 
   #setStartAndEnd() {
-    this.boxes.set(1, 1, 2)
-    this.changed.push({x: 1, y: 1})
+    const width = this.dimensions.width
+    const height = this.dimensions.height
 
-    this.boxes.set(this.dimensions.width, this.dimensions.height, 3)
-    this.changed.push({x: this.dimensions.width, y: this.dimensions.height})
+    const startX = Math.min(Math.ceil(width * 0.1), 3)
+    const startY = Math.ceil(height / 2)
+
+    this.set(startX, startY, BoxType.Start)
+
+    const endX = width + 1 - Math.min(Math.ceil(width * 0.1), 3)
+    const endY = Math.ceil(height / 2)
+
+    this.set(endX, endY, BoxType.End)
   }
 
   #removeOldStart() {

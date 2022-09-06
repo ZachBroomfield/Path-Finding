@@ -102,7 +102,7 @@ export default class GridFactory {
   static #normaliseDimensions(dimensions: Dimensions): Dimensions {
     return {
       width: Math.min(dimensions.width, 300),
-      height: Math.min(dimensions.height, 200)
+      height: Math.min(dimensions.height, 180)
     }
   }
 
@@ -116,10 +116,10 @@ export default class GridFactory {
     scale: number = 1
   ): number {
 
-    const maxW = Math.floor(canvasSize.width * scale)
-    const maxH = Math.floor(canvasSize.height * scale)
-    const wSpacing = Math.floor((maxW - dimensions.width) / dimensions.width)
-    const hSpacing = Math.floor((maxH - dimensions.height) / dimensions.height)
+    const maxW = Math.ceil(canvasSize.width * scale)
+    const maxH = Math.ceil(canvasSize.height * scale)
+    const wSpacing = Math.ceil((maxW - dimensions.width) / dimensions.width)
+    const hSpacing = Math.ceil((maxH - dimensions.height) / dimensions.height)
 
     return Math.min(wSpacing, hSpacing)
   }

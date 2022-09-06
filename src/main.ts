@@ -1,6 +1,7 @@
 import Button from './classes/Button'
 import ButtonSetup from './classes/ButtonSetup'
 import CanvasHandler from './classes/CanvasHandler'
+import Grid from './classes/Grid'
 import GridFactory from './classes/GridFactory'
 import State from './classes/State'
 import VectorArray2D from './classes/VectorArray2D'
@@ -15,8 +16,8 @@ const canvasHandler = new CanvasHandler({
 
 const grid = GridFactory.create({
   dimensions: {
-    width: 30,
-    height: 20
+    width: 150,
+    height: 90
   },
   canvasSize: {
     width: canvasHandler.getDimensions().width - 250,
@@ -32,12 +33,30 @@ const buttons: Button[] =
 
 function initialDraw() {
   grid.drawLines(canvasHandler.getCtx())
-  buttons.forEach(button => {
-    button.draw(canvasHandler.getCtx())
-  })
 }
 
 function animate() {
+
+  if (state.randomise) {
+    const weighting = state.diagonals ? 0.41 : 0.59
+    const timeOne = Date.now()
+    resetList()
+    grid.randomiseBarriers(weighting)
+
+    while (!checkValidSolution(grid)) {
+      list.reset()
+      grid.resetChanged()
+      grid.randomiseBarriers(weighting)
+    }
+
+    state.randomise = false
+
+    // uncomment to NOT draw when path is found
+    // state.resetPath = true
+    const timeTwo = Date.now()
+
+    console.log(timeTwo - timeOne)
+  }
 
   if (state.mouse.leftClick && !state.createPath && !list.pathFound) {
     grid.editGrid(state)
@@ -64,7 +83,7 @@ function animate() {
           button.update()
         })
       } else {
-        list.createNextStep(grid)
+        list.createNextStep(grid, state.diagonals)
       }
     }
 
@@ -76,7 +95,6 @@ function animate() {
   }
 
   state.incrementFrame()
-
   requestAnimationFrame(animate)
 }
 
@@ -97,6 +115,20 @@ function handleMouseClick() {
       button.checkClick(state.mouse)
     })
   }
+}
+
+
+function checkValidSolution(grid: Grid) {
+  state.createPath = true
+
+  while(!list.pathFound) {
+    list.createNextStep(grid, state.diagonals)
+    
+    if (list.noPath()) return false 
+  }
+  state.createPath = false
+
+  return true
 }
 
 initialDraw()

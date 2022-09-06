@@ -22,7 +22,7 @@ export default class VectorArray2D {
     this.#currentEnds = []
   }
 
-  createNextStep(grid: Grid) {
+  createNextStep(grid: Grid, diagonals: boolean) {
     if (!this.#started) {
       const start = grid.getStart()
       this.list.set(start.x - 1, start.y - 1, 1)
@@ -34,7 +34,7 @@ export default class VectorArray2D {
 
     this.#currentEnds.forEach(vector => {
       if (this.pathFound) return
-
+      
       this.#checkDirection(
         grid, vector.copy(), Vector2D.add(vector, {x: 0, y: -1}), tempEnds
       )
@@ -50,9 +50,31 @@ export default class VectorArray2D {
       this.#checkDirection(
         grid, vector.copy(), Vector2D.add(vector, {x: -1, y: 0}), tempEnds
       )
+
+      if (diagonals) {
+        this.#checkDirection(
+          grid, vector.copy(), Vector2D.add(vector, {x: 1, y: -1}), tempEnds
+        )
+  
+        this.#checkDirection(
+          grid, vector.copy(), Vector2D.add(vector, {x: 1, y: 1}), tempEnds
+        )
+  
+        this.#checkDirection(
+          grid, vector.copy(), Vector2D.add(vector, {x: -1, y: 1}), tempEnds
+        )
+  
+        this.#checkDirection(
+          grid, vector.copy(), Vector2D.add(vector, {x: -1, y: -1}), tempEnds
+        )
+      }
     })
 
-    this.#currentEnds = tempEnds
+    if (this.pathFound) {
+      this.#currentEnds.length = 0
+    } else {
+      this.#currentEnds = tempEnds
+    }
   }
 
   reset() {
@@ -60,6 +82,10 @@ export default class VectorArray2D {
     this.pathFound = false
     this.#currentEnds.length = 0
     this.#started = false
+  }
+
+  noPath(): boolean {
+    return this.#currentEnds.length === 0 && !this.pathFound
   }
 
   #checkDirection(
@@ -77,18 +103,18 @@ export default class VectorArray2D {
       tempEnds.push(direction)
       return
     } else if (nextPosition === 2) {
-      console.log('win')
+      // console.log('win')
       this.pathFound = true
   
-      let counter = 0
+      // let counter = 0
   
       let value = last
       while (this.list.get(value.x - 1, value.y - 1) !== 1) {
-        counter++
+        // counter++
         grid.set(value.x, value.y, 5)
         value = this.list.get(value.x - 1, value.y - 1)
       }
-      console.log(counter)
+      // console.log(counter)
     }
   }
 

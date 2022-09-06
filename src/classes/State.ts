@@ -11,6 +11,8 @@ export default class State {
   frame: number
   resetPath: boolean
   resetAll: boolean
+  randomise: boolean
+  diagonals: boolean
 
   
   constructor() {
@@ -24,6 +26,8 @@ export default class State {
     this.frame = 0
     this.resetPath = false
     this.resetAll = false
+    this.randomise = false
+    this.diagonals = false
   }
 
   updateMousePosition(e :MouseEvent) {

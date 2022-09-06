@@ -9,18 +9,22 @@ interface Dimensions {
 }
 
 export default class ButtonSetup {
+  static buttonHeight = 50
+  static buttonWidth = 200
+  static offset = 10
+
   static setup(canvasDimensions: Dimensions, state: State): Button[] {
     const buttons: Button[] = []
 
     buttons.push(
       new Button({
         size: {
-          width: 200,
-          height: 50
+          width: ButtonSetup.buttonWidth,
+          height: ButtonSetup.buttonHeight
         },
         position: new Vector2D({
           x: canvasDimensions.width - 240,
-          y: canvasDimensions.height / 2 - 150
+          y: 0
         }),
         text: 'Begin',
         fillColour: 'gray',
@@ -46,12 +50,12 @@ export default class ButtonSetup {
     buttons.push(
       new Button({
         size: {
-          width: 200,
-          height: 50
+          width: ButtonSetup.buttonWidth,
+          height: ButtonSetup.buttonHeight
         },
         position: new Vector2D({
           x: canvasDimensions.width - 240,
-          y: canvasDimensions.height / 2 - 90
+          y: 0
         }),
         text: 'Clear Path',
         fillColour: 'gray',
@@ -68,12 +72,12 @@ export default class ButtonSetup {
     buttons.push(
       new Button({
         size: {
-          width: 200,
-          height: 50
+          width: ButtonSetup.buttonWidth,
+          height: ButtonSetup.buttonHeight
         },
         position: new Vector2D({
           x: canvasDimensions.width - 240,
-          y: canvasDimensions.height / 2 - 30
+          y: 0
         }),
         text: 'Clear All',
         fillColour: 'gray',
@@ -90,12 +94,12 @@ export default class ButtonSetup {
     buttons.push(
       new Button({
         size: {
-          width: 200,
-          height: 50
+          width: ButtonSetup.buttonWidth,
+          height: ButtonSetup.buttonHeight
         },
         position: new Vector2D({
           x: canvasDimensions.width - 240,
-          y: canvasDimensions.height / 2 + 30
+          y: 0
         }),
         text: 'Place Start',
         fillColour: 'green',
@@ -124,12 +128,12 @@ export default class ButtonSetup {
     buttons.push(
       new Button({
         size: {
-          width: 200,
-          height: 50
+          width: ButtonSetup.buttonWidth,
+          height: ButtonSetup.buttonHeight
         },
         position: new Vector2D({
           x: canvasDimensions.width - 240,
-          y: canvasDimensions.height / 2 + 90
+          y: 0
         }),
         text: 'Place End',
         fillColour: 'red',
@@ -158,12 +162,12 @@ export default class ButtonSetup {
     buttons.push(
       new Button({
         size: {
-          width: 200,
-          height: 50
+          width: ButtonSetup.buttonWidth,
+          height: ButtonSetup.buttonHeight
         },
         position: new Vector2D({
           x: canvasDimensions.width - 240,
-          y: canvasDimensions.height / 2 + 150
+          y: 0
         }),
         text: 'Draw Barriers',
         fillColour: 'gray',
@@ -192,12 +196,12 @@ export default class ButtonSetup {
     buttons.push(
       new Button({
         size: {
-          width: 200,
-          height: 50
+          width: ButtonSetup.buttonWidth,
+          height: ButtonSetup.buttonHeight
         },
         position: new Vector2D({
           x: canvasDimensions.width - 240,
-          y: canvasDimensions.height / 2 + 210
+          y: 0
         }),
         text: 'Erase Barriers',
         fillColour: 'gray',
@@ -223,6 +227,69 @@ export default class ButtonSetup {
       })
     )
 
+    buttons.push(
+      new Button({
+        size: {
+          width: ButtonSetup.buttonWidth,
+          height: ButtonSetup.buttonHeight
+        },
+        position: new Vector2D({
+          x: canvasDimensions.width - 240,
+          y: 0
+        }),
+        text: 'Randomise',
+        fillColour: 'gray',
+        selected: false,
+        action: function() {
+          state.randomise = true
+        },
+        update: function() {
+          null
+        }
+      })
+    )
+
+    buttons.push(
+      new Button({
+        size: {
+          width: ButtonSetup.buttonWidth,
+          height: ButtonSetup.buttonHeight
+        },
+        position: new Vector2D({
+          x: canvasDimensions.width - 240,
+          y: 0
+        }),
+        text: 'Diagonals',
+        fillColour: 'gray',
+        selected: false,
+        action: function() {
+          state.diagonals = !state.diagonals
+          this.update()
+        },
+        update: function() {
+          if (state.diagonals) {
+            this.strokeColour = 'white'
+            this.fillColour = 'darkgray'
+          } else {
+            this.strokeColour = 'black'
+            this.fillColour = 'gray'
+          }
+        }
+      })
+    )
+
+    this.#setHeights(buttons, canvasDimensions)
+
     return buttons
+  }
+
+  static #setHeights(buttons: Button[], canvasDimensions: Dimensions) {
+    const midHeight = Math.floor(canvasDimensions.height / 2)
+    const halfAmount = buttons.length / 2
+    const totalDist = ButtonSetup.buttonHeight + ButtonSetup.offset
+
+    buttons.forEach((button, index) => {
+      button.position.y = midHeight - (halfAmount - index) * totalDist
+    })
   }
 }
