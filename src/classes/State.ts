@@ -1,4 +1,4 @@
-import { BoxType } from './Box'
+import { BoxTypes } from './Box'
 
 export default class State {
   mouse: {
@@ -6,7 +6,13 @@ export default class State {
     y: number
     leftClick: boolean
   }
-  drawType: BoxType
+  grid: {
+    width: number
+    height: number
+    changed: boolean
+  }
+
+  drawType: BoxTypes
   createPath: boolean
   frame: number
   resetPath: boolean
@@ -15,13 +21,18 @@ export default class State {
   diagonals: boolean
 
   
-  constructor() {
+  constructor({width, height}: {width: number, height: number}) {
     this.mouse = {
       x: 0,
       y: 0,
       leftClick: false
     }
-    this.drawType = BoxType.Blank
+    this.grid = {
+      width: width,
+      height: height,
+      changed: false
+    }
+    this.drawType = BoxTypes.Blank
     this.createPath = false
     this.frame = 0
     this.resetPath = false

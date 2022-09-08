@@ -1,13 +1,9 @@
 import Array2D from './Array2D'
 import Box from './Box'
-
-interface Dimensions {
-  width: number
-  height: number
-}
+import { Dimensions } from '../utils/Interfaces'
 
 export default class GridBoxes {
-  boxes: Array2D
+  boxes: Array2D<Box>
 
   constructor(dimensions: Dimensions) {
     this.boxes = new Array2D(dimensions, new Box)

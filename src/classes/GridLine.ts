@@ -1,9 +1,5 @@
 import Vector2D from './Vector2D'
-
-interface Point {
-  x: number
-  y: number
-}
+import { Point } from '../utils/Interfaces'
 
 interface Segment {
   start: Point

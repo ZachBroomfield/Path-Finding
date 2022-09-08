@@ -2,16 +2,7 @@ import Grid from './Grid.js'
 import GridBoxes from './GridBoxes.js'
 import GridLine from './GridLine.js'
 import Vector2D from './Vector2D.js'
-
-interface Dimensions {
-  width: number
-  height: number
-}
-
-interface Point {
-  x: number
-  y: number
-}
+import { Point, Dimensions } from '../utils/Interfaces'
 
 interface CreateParams {
   dimensions: Dimensions
@@ -113,7 +104,7 @@ export default class GridFactory {
   static #calcSpacing(
     dimensions: Dimensions,
     canvasSize: Dimensions,
-    scale: number = 1
+    scale: number = 0.99
   ): number {
 
     const maxW = Math.ceil(canvasSize.width * scale)

@@ -1,10 +1,5 @@
 import Vector2D from './Vector2D'
-
-interface Dimensions {
-  width: number
-  height: number
-}
-
+import { Point, Dimensions } from '../utils/Interfaces'
 
 interface Params {
   size: Dimensions
@@ -42,6 +37,17 @@ export default class Button {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
+    this.#drawButton(ctx)
+    this.#drawText(ctx)
+  }
+  
+  checkClick(mouse: Point) {
+    if (this.#collisionCheck(mouse)) {
+        this.action()
+      }
+  }
+
+  #drawButton(ctx: CanvasRenderingContext2D) {
     ctx.beginPath()
     ctx.fillStyle = this.fillColour
     ctx.fillRect(
@@ -61,7 +67,9 @@ export default class Button {
       this.size.height
     )
     ctx.stroke()
-    
+  }
+
+  #drawText(ctx: CanvasRenderingContext2D) {
     ctx.font = '30px Arial'
     ctx.fillStyle = 'black'
     ctx.textAlign = 'center'
@@ -72,14 +80,12 @@ export default class Button {
     )
   }
 
-  checkClick(mouse: {x: number, y: number}) {
-    if (
+  #collisionCheck(mouse: Point): boolean {
+    return (
       mouse.x > this.position.x &&
       mouse.x < this.position.x + this.size.width &&
       mouse.y > this.position.y &&
       mouse.y < this.position.y + this.size.height
-      ) {
-        this.action()
-      }
+    )
   }
 }

@@ -1,7 +1,4 @@
-interface Point {
-  x: number
-  y: number
-}
+import { Point } from '../utils/Interfaces'
 
 export default class Vector2D {
   x :number
@@ -10,14 +7,14 @@ export default class Vector2D {
   constructor(x: number, y: number)
   constructor(v: Point)
   constructor(xv: number | Point, y?: number) {
-    if (typeof xv === "object") {
+    if (typeof xv === 'object') {
       this.x = xv.x
       this.y = xv.y
-    } else if (typeof xv === "number" && y) {
+    } else if (typeof xv === 'number' && y) {
       this.x = xv
       this.y = y
     } else {
-      throw new Error("Incorrect Vector2D parameters provided")
+      throw new Error('Incorrect Vector2D parameters provided')
     }
   }
 

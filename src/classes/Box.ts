@@ -1,5 +1,7 @@
-export enum BoxType {
-  Blank,
+import { Point } from '../utils/Interfaces'
+
+export enum BoxTypes {
+  Blank = 0,
   Barrier,
   Start,
   End,
@@ -7,46 +9,41 @@ export enum BoxType {
   Success
 }
 
-interface Point {
-  x: number
-  y: number
-}
-
 export default class Box {
-  type: BoxType
+  type: BoxTypes
 
-  constructor(type: BoxType = BoxType.Blank) {
+  constructor(type: BoxTypes = BoxTypes.Blank) {
     this.type = type
   }
 
   draw(ctx: CanvasRenderingContext2D, topLeft: Point, spacing: number) {
     ctx.beginPath()
     ctx.lineWidth = 0
-    ctx.fillStyle = this.getColour()
+    ctx.fillStyle = this.#getColour()
     ctx.fillRect(
       topLeft.x,
       topLeft.y,
-      spacing - 2,
-      spacing - 2
+      spacing,
+      spacing
     )
     ctx.stroke()
   }
 
-  getColour(): string {
+  #getColour(): string {
     switch(this.type) {
-      case(BoxType.Start):
+      case(BoxTypes.Start):
         return 'green'
 
-      case(BoxType.End):
+      case(BoxTypes.End):
         return 'red'
 
-      case(BoxType.Path):
+      case(BoxTypes.Path):
         return 'blue'
 
-      case(BoxType.Success):
+      case(BoxTypes.Success):
         return 'gold'
 
-      case(BoxType.Blank):
+      case(BoxTypes.Blank):
         return 'lightgray'
         
       default:

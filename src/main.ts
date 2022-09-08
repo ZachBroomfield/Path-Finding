@@ -1,10 +1,9 @@
-import Button from './classes/Button'
-import ButtonSetup from './classes/ButtonSetup'
 import CanvasHandler from './classes/CanvasHandler'
 import Grid from './classes/Grid'
 import GridFactory from './classes/GridFactory'
 import State from './classes/State'
-import VectorArray2D from './classes/VectorArray2D'
+import Path2D from './classes/Path2D'
+import ButtonHandler from './classes/ButtonHandler'
 
 const canvasHandler = new CanvasHandler({
   dimensions: {
@@ -14,10 +13,12 @@ const canvasHandler = new CanvasHandler({
   id: "canvas"
 })
 
-const grid = GridFactory.create({
+const state = new State({width: 150, height: 90})
+
+let grid = GridFactory.create({
   dimensions: {
-    width: 150,
-    height: 90
+    width: state.grid.width,
+    height: state.grid.height
   },
   canvasSize: {
     width: canvasHandler.getDimensions().width - 250,
@@ -25,40 +26,51 @@ const grid = GridFactory.create({
   }
 })
 
-const state = new State
-const list = new VectorArray2D(grid.dimensions)
+let path = new Path2D(grid.dimensions)
 
-const buttons: Button[] =
-  ButtonSetup.setup(canvasHandler.getDimensions(), state)
-
+const buttonHandler = new ButtonHandler(canvasHandler.getDimensions(), state)
+  
 function initialDraw() {
+  canvasHandler.clear()
   grid.drawLines(canvasHandler.getCtx())
 }
 
 function animate() {
 
+  if (state.grid.changed) {
+    grid = GridFactory.create({
+      dimensions: {
+        width: state.grid.width,
+        height: state.grid.height
+      },
+      canvasSize: {
+        width: canvasHandler.getDimensions().width - 250,
+        height: canvasHandler.getDimensions().height
+      }
+    })
+
+    path = new Path2D(grid.dimensions)
+    state.grid.changed = false
+    initialDraw()
+    buttonHandler.drawButtons(canvasHandler.getCtx())
+  }
+
   if (state.randomise) {
     const weighting = state.diagonals ? 0.41 : 0.59
-    const timeOne = Date.now()
     resetList()
     grid.randomiseBarriers(weighting)
 
     while (!checkValidSolution(grid)) {
-      list.reset()
+      path.reset()
       grid.resetChanged()
       grid.randomiseBarriers(weighting)
     }
 
     state.randomise = false
-
-    // uncomment to NOT draw when path is found
-    // state.resetPath = true
-    const timeTwo = Date.now()
-
-    console.log(timeTwo - timeOne)
+    state.resetPath = true
   }
 
-  if (state.mouse.leftClick && !state.createPath && !list.pathFound) {
+  if (state.mouse.leftClick && !state.createPath && !path.pathFound) {
     grid.editGrid(state)
   }
 
@@ -77,21 +89,17 @@ function animate() {
   if (state.frame % 5 === 0) {
 
     if (state.createPath) {
-      if (list.pathFound) {
+      if (path.pathFound) {
         state.createPath = false
-        buttons.forEach(button => {
-          button.update()
-        })
+        buttonHandler.updateButtons()
       } else {
-        list.createNextStep(grid, state.diagonals)
+        path.createNextStep(grid, state.diagonals)
       }
     }
 
     grid.drawChanged(canvasHandler.getCtx())
   
-    buttons.forEach(button => {
-      button.draw(canvasHandler.getCtx())
-    })
+    buttonHandler.drawButtons(canvasHandler.getCtx())
   }
 
   state.incrementFrame()
@@ -99,11 +107,9 @@ function animate() {
 }
 
 function resetList() {
-  list.reset()
+  path.reset()
   state.createPath = false
-  buttons.forEach(button => {
-    button.update()
-  })
+  buttonHandler.updateButtons()
 }
 
 function handleMouseClick() {
@@ -111,20 +117,17 @@ function handleMouseClick() {
   if (coord !== null) {
     state.mouse.leftClick = true
   } else {
-    buttons.forEach(button => {
-      button.checkClick(state.mouse)
-    })
+    buttonHandler.checkClick(state.mouse)
   }
 }
-
 
 function checkValidSolution(grid: Grid) {
   state.createPath = true
 
-  while(!list.pathFound) {
-    list.createNextStep(grid, state.diagonals)
+  while(!path.pathFound) {
+    path.createNextStep(grid, state.diagonals)
     
-    if (list.noPath()) return false 
+    if (path.noPath()) return false 
   }
   state.createPath = false
 

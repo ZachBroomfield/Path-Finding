@@ -1,9 +1,5 @@
 import Vector2D from './Vector2D'
-
-interface Dimensions {
-  width: number
-  height: number
-}
+import { Dimensions } from '../utils/Interfaces'
 
 interface Construction {
   dimensions: Dimensions

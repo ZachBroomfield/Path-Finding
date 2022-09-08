@@ -1,34 +1,27 @@
-interface Dimensions {
-  width: number
-  height: number
-}
+import { Dimensions } from '../utils/Interfaces'
 
-export default class Array2D {
-  values: any[]
-  width: number
-  height: number
+export default class Array2D<type> {
+  values: type[]
+  size: Dimensions
 
-  constructor(size: Dimensions, initialValue: any) {
+  constructor(size: Dimensions, initialValue: type) {
     this.values = new Array(size.width * size.height)
-    this.width = size.width
-    this.height = size.height
+    this.size = size
 
     this.#setInitialValues(initialValue)
   }
 
-  get(x: number, y: number) {
-    return this.values[x + (y * this.width)]
+  get(x: number, y: number): type {
+    return this.values[x + (y * this.size.width)]
   }
 
-  set(x: number, y: number, value: any) {
-    this.values[x + (y * this.width)] = value
+  set(x: number, y: number, value: type) {
+    this.values[x + (y * this.size.width)] = value
   }
 
-  #setInitialValues(initialValue: any) {
-    for (let i = 0; i < this.width; i++) {
-      for (let j = 0; j < this.height; j++) {
-        this.set(i, j, initialValue)
-      }
+  #setInitialValues(initialValue: type) {
+    for (let i = 0; i < this.size.width * this.size.height; i++) {
+      this.values[i] = initialValue
     }
   }
 

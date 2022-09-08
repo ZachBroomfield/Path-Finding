@@ -1,12 +1,8 @@
-import { BoxType } from './Box'
+import { BoxTypes } from './Box'
 import Button from './Button'
 import State from './State'
 import Vector2D from './Vector2D'
-
-interface Dimensions {
-  width: number
-  height: number
-}
+import { Dimensions } from '../utils/Interfaces'
 
 export default class ButtonSetup {
   static buttonHeight = 50
@@ -106,7 +102,7 @@ export default class ButtonSetup {
         selected: true,
         action: function() {
           this.selected = true
-          state.drawType = BoxType.Start
+          state.drawType = BoxTypes.Start
           this.update()
         },
         update: function() {
@@ -140,7 +136,7 @@ export default class ButtonSetup {
         selected: false,
         action: function() {
           this.selected = true
-          state.drawType = BoxType.End
+          state.drawType = BoxTypes.End
           this.update()
         },
         update: function() {
@@ -174,7 +170,7 @@ export default class ButtonSetup {
         selected: false,
         action: function() {
           this.selected = true
-          state.drawType = BoxType.Barrier
+          state.drawType = BoxTypes.Barrier
           this.update()
         },
         update: function() {
@@ -208,7 +204,7 @@ export default class ButtonSetup {
         selected: false,
         action: function() {
           this.selected = true
-          state.drawType = BoxType.Blank
+          state.drawType = BoxTypes.Blank
           this.update()
         },
         update: function() {
@@ -274,6 +270,63 @@ export default class ButtonSetup {
             this.strokeColour = 'black'
             this.fillColour = 'gray'
           }
+        }
+      })
+    )
+
+    buttons.push(
+      new Button({
+        size: {
+          width: ButtonSetup.buttonWidth,
+          height: ButtonSetup.buttonHeight
+        },
+        position: new Vector2D({
+          x: canvasDimensions.width - 240,
+          y: 0
+        }),
+        text: 'Size',
+        fillColour: 'gray',
+        selected: false,
+        action: function() {
+          null
+        },
+        update: function() {
+          null
+        }
+      })
+    )
+
+    buttons.push(
+      new Button({
+        size: {
+          width: ButtonSetup.buttonWidth,
+          height: ButtonSetup.buttonHeight
+        },
+        position: new Vector2D({
+          x: canvasDimensions.width - 240,
+          y: 0
+        }),
+        text: `-  ${state.grid.width}x${state.grid.height}  +`,
+        fillColour: 'gray',
+        selected: false,
+        action: function() {
+          if (state.mouse.x >= this.position.x + (this.size.width / 2)) {
+            if (state.grid.width < 300) {
+              state.grid.width += 15
+              state.grid.height += 9
+              state.grid.changed = true
+            }
+          } else {
+            if (state.grid.width > 15) {
+              state.grid.width -= 15
+              state.grid.height -= 9
+              state.grid.changed = true
+            }
+          }
+          this.update()
+        },
+        update: function() {
+          this.text = `-  ${state.grid.width}x${state.grid.height}  +`
         }
       })
     )
