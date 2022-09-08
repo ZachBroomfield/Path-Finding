@@ -1,12 +1,13 @@
 {
-  "name": "vitetest",
+  "name": "pathfinding",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "npm run build && git add dist -f && git commit -m'hosting'  && git subtree push --prefix dist origin gh-pages"
   },
   "devDependencies": {
     "typescript": "^4.6.4",
