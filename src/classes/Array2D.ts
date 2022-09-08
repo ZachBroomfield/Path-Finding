@@ -2,25 +2,25 @@ import { Dimensions } from '../utils/Interfaces'
 
 export default class Array2D<type> {
   values: type[]
-  size: Dimensions
+  dimensions: Dimensions
 
-  constructor(size: Dimensions, initialValue: type) {
-    this.values = new Array(size.width * size.height)
-    this.size = size
+  constructor(dimensions: Dimensions, initialValue: type) {
+    this.values = new Array(dimensions.cols * dimensions.rows)
+    this.dimensions = dimensions
 
     this.#setInitialValues(initialValue)
   }
 
   get(x: number, y: number): type {
-    return this.values[x + (y * this.size.width)]
+    return this.values[x + (y * this.dimensions.cols)]
   }
 
   set(x: number, y: number, value: type) {
-    this.values[x + (y * this.size.width)] = value
+    this.values[x + (y * this.dimensions.cols)] = value
   }
 
   #setInitialValues(initialValue: type) {
-    for (let i = 0; i < this.size.width * this.size.height; i++) {
+    for (let i = 0; i < this.dimensions.cols * this.dimensions.rows; i++) {
       this.values[i] = initialValue
     }
   }

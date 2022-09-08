@@ -6,29 +6,29 @@ import Path2D from './classes/Path2D'
 import ButtonHandler from './classes/ButtonHandler'
 
 const canvasHandler = new CanvasHandler({
-  dimensions: {
+  size: {
     height: innerHeight,
     width: innerWidth
   },
   id: "canvas"
 })
 
-const state = new State({width: 150, height: 90})
+const state = new State({cols: 150, rows: 90})
 
 let grid = GridFactory.create({
   dimensions: {
-    width: state.grid.width,
-    height: state.grid.height
+    cols: state.grid.cols,
+    rows: state.grid.rows
   },
   canvasSize: {
-    width: canvasHandler.getDimensions().width - 250,
-    height: canvasHandler.getDimensions().height
+    width: canvasHandler.getSize().width - 250,
+    height: canvasHandler.getSize().height
   }
 })
 
 let path = new Path2D(grid.dimensions)
 
-const buttonHandler = new ButtonHandler(canvasHandler.getDimensions(), state)
+const buttonHandler = new ButtonHandler(canvasHandler.getSize(), state)
   
 function initialDraw() {
   canvasHandler.clear()
@@ -40,12 +40,12 @@ function animate() {
   if (state.grid.changed) {
     grid = GridFactory.create({
       dimensions: {
-        width: state.grid.width,
-        height: state.grid.height
+        cols: state.grid.cols,
+        rows: state.grid.rows
       },
       canvasSize: {
-        width: canvasHandler.getDimensions().width - 250,
-        height: canvasHandler.getDimensions().height
+        width: canvasHandler.getSize().width - 250,
+        height: canvasHandler.getSize().height
       }
     })
 

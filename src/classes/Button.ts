@@ -1,8 +1,8 @@
 import Vector2D from './Vector2D'
-import { Point, Dimensions } from '../utils/Interfaces'
+import { Point, Size } from '../utils/Interfaces'
 
 interface Params {
-  size: Dimensions
+  size: Size
   position: Vector2D
   text: string
   fillColour: string
@@ -13,7 +13,7 @@ interface Params {
 }
 
 export default class Button {
-  size: Dimensions
+  size: Size
   position: Vector2D
   text: string
   fillColour: string

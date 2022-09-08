@@ -93,8 +93,8 @@ export default class Grid {
   }
 
   #getEnd(): Vector2D {
-    for (let i = 1; i <= this.dimensions.width; i++) {
-      for (let j = 1; j <= this.dimensions.height; j++) {
+    for (let i = 1; i <= this.dimensions.cols; i++) {
+      for (let j = 1; j <= this.dimensions.rows; j++) {
         if (this.get(i, j).type === BoxTypes.End) {
           return new Vector2D(i, j)
         }
@@ -105,16 +105,15 @@ export default class Grid {
   }
 
   #setStartAndEnd() {
-    const width = this.dimensions.width
-    const height = this.dimensions.height
+    const {cols, rows} = this.dimensions
 
-    const startX = Math.min(Math.ceil(width * 0.1), 3)
-    const startY = Math.ceil(height / 2)
+    const startX = Math.min(Math.ceil(cols * 0.1), 3)
+    const startY = Math.ceil(rows / 2)
 
     this.set(startX, startY, BoxTypes.Start)
 
-    const endX = width + 1 - Math.min(Math.ceil(width * 0.1), 3)
-    const endY = Math.ceil(height / 2)
+    const endX = cols + 1 - Math.min(Math.ceil(cols * 0.1), 3)
+    const endY = Math.ceil(rows / 2)
 
     this.set(endX, endY, BoxTypes.End)
   }
@@ -164,8 +163,8 @@ export default class Grid {
   #randomiseBarriers(weighting: number) {
     this.clearAll()
     
-    for (let i = 1; i <= this.dimensions.width; i++) {
-      for (let j = 1; j <= this.dimensions.height; j++) {
+    for (let i = 1; i <= this.dimensions.cols; i++) {
+      for (let j = 1; j <= this.dimensions.rows; j++) {
         const type = this.get(i, j).type
         if (type === BoxTypes.Start || type === BoxTypes.End) continue
 
@@ -180,8 +179,8 @@ export default class Grid {
   }
 
   #clearPath() {
-    for (let i = 1; i <= this.dimensions.width; i++) {
-      for (let j = 1; j <= this.dimensions.height; j++) {
+    for (let i = 1; i <= this.dimensions.cols; i++) {
+      for (let j = 1; j <= this.dimensions.rows; j++) {
         const type = this.get(i, j).type
         if (type === BoxTypes.Path || type === BoxTypes.Success) {
           this.set(i, j, BoxTypes.Blank)
@@ -191,8 +190,8 @@ export default class Grid {
   }
 
   #clearAll() {
-    for (let i = 1; i <= this.dimensions.width; i++) {
-      for (let j = 1; j <= this.dimensions.height; j++) {
+    for (let i = 1; i <= this.dimensions.cols; i++) {
+      for (let j = 1; j <= this.dimensions.rows; j++) {
         const type = this.get(i, j).type
         if (
           type === BoxTypes.Barrier ||
@@ -206,8 +205,8 @@ export default class Grid {
   }
 
   #getStart(): Vector2D {
-    for (let i = 1; i <= this.dimensions.width; i++) {
-      for (let j = 1; j <= this.dimensions.height; j++) {
+    for (let i = 1; i <= this.dimensions.cols; i++) {
+      for (let j = 1; j <= this.dimensions.rows; j++) {
         if (this.get(i, j).type === BoxTypes.Start) {
           return new Vector2D(i, j)
         }

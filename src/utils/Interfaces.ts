@@ -3,7 +3,12 @@ export interface Point {
   y: number
 }
 
-export interface Dimensions {
+export interface Size {
   width: number
   height: number
+}
+
+export interface Dimensions {
+  cols: number
+  rows: number
 }

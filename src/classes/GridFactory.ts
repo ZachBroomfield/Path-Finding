@@ -2,11 +2,11 @@ import Grid from './Grid.js'
 import GridBoxes from './GridBoxes.js'
 import GridLine from './GridLine.js'
 import Vector2D from './Vector2D.js'
-import { Point, Dimensions } from '../utils/Interfaces'
+import { Point, Dimensions, Size } from '../utils/Interfaces'
 
 interface CreateParams {
   dimensions: Dimensions
-  canvasSize: Dimensions
+  canvasSize: Size
 }
 
 export default class GridFactory {
@@ -14,7 +14,7 @@ export default class GridFactory {
     return this.#createGrid(params.dimensions, params.canvasSize)
   }
 
-  static #createGrid(dimensions: Dimensions, canvasSize: Dimensions) {
+  static #createGrid(dimensions: Dimensions, canvasSize: Size) {
     dimensions = this.#normaliseDimensions(dimensions)
 
     const midPoint = this.#calcMidPoint(canvasSize)
@@ -85,32 +85,32 @@ export default class GridFactory {
     return (
       position.x > topLeft.x &&
       position.y > topLeft.y &&
-      position.x < topLeft.x + dimensions.width * spacing &&
-      position.y < topLeft.y + dimensions.height * spacing
+      position.x < topLeft.x + dimensions.cols * spacing &&
+      position.y < topLeft.y + dimensions.rows * spacing
     )
   }
 
   static #normaliseDimensions(dimensions: Dimensions): Dimensions {
     return {
-      width: Math.min(dimensions.width, 300),
-      height: Math.min(dimensions.height, 180)
+      cols: Math.min(dimensions.cols, 300),
+      rows: Math.min(dimensions.rows, 180)
     }
   }
 
-  static #calcMidPoint(canvasSize: Dimensions): Vector2D {
+  static #calcMidPoint(canvasSize: Size): Vector2D {
     return new Vector2D(canvasSize.width / 2, canvasSize.height / 2)
   }
 
   static #calcSpacing(
     dimensions: Dimensions,
-    canvasSize: Dimensions,
+    canvasSize: Size,
     scale: number = 0.99
   ): number {
 
     const maxW = Math.ceil(canvasSize.width * scale)
     const maxH = Math.ceil(canvasSize.height * scale)
-    const wSpacing = Math.ceil((maxW - dimensions.width) / dimensions.width)
-    const hSpacing = Math.ceil((maxH - dimensions.height) / dimensions.height)
+    const wSpacing = Math.ceil((maxW - dimensions.cols) / dimensions.cols)
+    const hSpacing = Math.ceil((maxH - dimensions.rows) / dimensions.rows)
 
     return Math.min(wSpacing, hSpacing)
   }
@@ -122,8 +122,8 @@ export default class GridFactory {
   ): Vector2D {
 
     return new Vector2D({
-      x: Math.round(midPoint.x - (dimensions.width * spacing) / 2),
-      y: Math.round(midPoint.y - (dimensions.height * spacing) / 2)
+      x: Math.round(midPoint.x - (dimensions.cols * spacing) / 2),
+      y: Math.round(midPoint.y - (dimensions.rows * spacing) / 2)
     })
   }
 
@@ -137,7 +137,7 @@ export default class GridFactory {
     const height = this.#calcHeight(dimensions, spacing)
     const width = this.#calcWidth(dimensions, spacing)
 
-    for (let i = 0; i <= dimensions.width; i++) {
+    for (let i = 0; i <= dimensions.cols; i++) {
       gridLines.push(
         new GridLine({
           start: new Vector2D({
@@ -152,7 +152,7 @@ export default class GridFactory {
       )
     }
 
-    for (let i = 0; i <= dimensions.height; i++) {
+    for (let i = 0; i <= dimensions.rows; i++) {
       gridLines.push(
         new GridLine({
           start: new Vector2D({
@@ -170,11 +170,11 @@ export default class GridFactory {
     return gridLines
   }
 
-  static #calcHeight(dimensions: Dimensions, spacing: number) {
-    return dimensions.height * spacing
+  static #calcWidth(dimensions: Dimensions, spacing: number) {
+    return dimensions.cols * spacing
   }
 
-  static #calcWidth(dimensions: Dimensions, spacing: number) {
-    return dimensions.width * spacing
+  static #calcHeight(dimensions: Dimensions, spacing: number) {
+    return dimensions.rows * spacing
   }
 }

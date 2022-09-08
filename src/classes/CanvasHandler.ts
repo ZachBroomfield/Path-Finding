@@ -1,8 +1,8 @@
 import Vector2D from './Vector2D'
-import { Dimensions } from '../utils/Interfaces'
+import { Size } from '../utils/Interfaces'
 
 interface Construction {
-  dimensions: Dimensions
+  size: Size
   id: string
 }
 
@@ -15,8 +15,8 @@ export default class CanvasHandler {
     this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D
 
     this.#setCanvasSize({
-      width: params.dimensions.width,
-      height: params.dimensions.height
+      width: params.size.width,
+      height: params.size.height
     })
   }
 
@@ -31,7 +31,7 @@ export default class CanvasHandler {
     })
   }
 
-  getDimensions() :Dimensions {
+  getSize() :Size {
     return {
       width: this.canvas.width,
       height: this.canvas.height
@@ -42,8 +42,8 @@ export default class CanvasHandler {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
   }
 
-  #setCanvasSize(dimensions: Dimensions) {
-    this.canvas.height = dimensions.height
-    this.canvas.width = dimensions.width
+  #setCanvasSize(size: Size) {
+    this.canvas.height = size.height
+    this.canvas.width = size.width
   }
 }

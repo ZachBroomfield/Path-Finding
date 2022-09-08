@@ -1,13 +1,13 @@
-import { Dimensions } from '../utils/Interfaces'
 import Button from './Button'
 import ButtonSetup from './ButtonSetup'
 import State from './State'
+import { Size } from '../utils/Interfaces'
 
 export default class ButtonHandler {
   buttons: Button[]
 
-  constructor(canvasDimensions: Dimensions, state: State) {
-    this.buttons = ButtonSetup.setup(canvasDimensions, state)
+  constructor(canvasSize: Size, state: State) {
+    this.buttons = ButtonSetup.setup(canvasSize, state)
   }
 
   updateButtons() {

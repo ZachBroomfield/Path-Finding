@@ -8,14 +8,14 @@ export default class Path2D {
   #values: Array2D<Vector2D | number>
   pathFound: boolean
   #started: boolean
-  #size: Dimensions
+  #dimensions: Dimensions
   #currentEnds: Vector2D[]
 
-  constructor(size: Dimensions) {
-    this.#values = new Array2D(size, 0)
+  constructor(dimensions: Dimensions) {
+    this.#values = new Array2D(dimensions, 0)
     this.pathFound = false
     this.#started = false
-    this.#size = size
+    this.#dimensions = dimensions
     this.#currentEnds = []
   }
 
@@ -48,7 +48,7 @@ export default class Path2D {
   }
 
   reset() {
-    this.#values = new Array2D(this.#size, 0)
+    this.#values = new Array2D(this.#dimensions, 0)
     this.pathFound = false
     this.#currentEnds.length = 0
     this.#started = false
@@ -87,8 +87,8 @@ export default class Path2D {
 
   #checkGrid(grid :Grid, position: Vector2D): number {
     if (
-      position.x < 1 || position.x > grid.dimensions.width ||
-      position.y < 1 || position.y > grid.dimensions.height
+      position.x < 1 || position.x > grid.dimensions.cols ||
+      position.y < 1 || position.y > grid.dimensions.rows
     ) return 0
   
     if (grid.get(position.x, position.y).type === BoxTypes.Blank) return 1

@@ -2,14 +2,14 @@ import { BoxTypes } from './Box'
 import Button from './Button'
 import State from './State'
 import Vector2D from './Vector2D'
-import { Dimensions } from '../utils/Interfaces'
+import { Size } from '../utils/Interfaces'
 
 export default class ButtonSetup {
   static buttonHeight = 50
   static buttonWidth = 200
   static offset = 10
 
-  static setup(canvasDimensions: Dimensions, state: State): Button[] {
+  static setup(canvasSize: Size, state: State): Button[] {
     const buttons: Button[] = []
 
     buttons.push(
@@ -19,7 +19,7 @@ export default class ButtonSetup {
           height: ButtonSetup.buttonHeight
         },
         position: new Vector2D({
-          x: canvasDimensions.width - 240,
+          x: canvasSize.width - 240,
           y: 0
         }),
         text: 'Begin',
@@ -50,7 +50,7 @@ export default class ButtonSetup {
           height: ButtonSetup.buttonHeight
         },
         position: new Vector2D({
-          x: canvasDimensions.width - 240,
+          x: canvasSize.width - 240,
           y: 0
         }),
         text: 'Clear Path',
@@ -72,7 +72,7 @@ export default class ButtonSetup {
           height: ButtonSetup.buttonHeight
         },
         position: new Vector2D({
-          x: canvasDimensions.width - 240,
+          x: canvasSize.width - 240,
           y: 0
         }),
         text: 'Clear All',
@@ -94,7 +94,7 @@ export default class ButtonSetup {
           height: ButtonSetup.buttonHeight
         },
         position: new Vector2D({
-          x: canvasDimensions.width - 240,
+          x: canvasSize.width - 240,
           y: 0
         }),
         text: 'Place Start',
@@ -128,7 +128,7 @@ export default class ButtonSetup {
           height: ButtonSetup.buttonHeight
         },
         position: new Vector2D({
-          x: canvasDimensions.width - 240,
+          x: canvasSize.width - 240,
           y: 0
         }),
         text: 'Place End',
@@ -162,7 +162,7 @@ export default class ButtonSetup {
           height: ButtonSetup.buttonHeight
         },
         position: new Vector2D({
-          x: canvasDimensions.width - 240,
+          x: canvasSize.width - 240,
           y: 0
         }),
         text: 'Draw Barriers',
@@ -199,7 +199,7 @@ export default class ButtonSetup {
           height: ButtonSetup.buttonHeight
         },
         position: new Vector2D({
-          x: canvasDimensions.width - 240,
+          x: canvasSize.width - 240,
           y: 0
         }),
         text: 'Erase Barriers',
@@ -233,7 +233,7 @@ export default class ButtonSetup {
           height: ButtonSetup.buttonHeight
         },
         position: new Vector2D({
-          x: canvasDimensions.width - 240,
+          x: canvasSize.width - 240,
           y: 0
         }),
         text: 'Randomise',
@@ -255,7 +255,7 @@ export default class ButtonSetup {
           height: ButtonSetup.buttonHeight
         },
         position: new Vector2D({
-          x: canvasDimensions.width - 240,
+          x: canvasSize.width - 240,
           y: 0
         }),
         text: 'Diagonals',
@@ -284,7 +284,7 @@ export default class ButtonSetup {
           height: ButtonSetup.buttonHeight
         },
         position: new Vector2D({
-          x: canvasDimensions.width - 240,
+          x: canvasSize.width - 240,
           y: 0
         }),
         text: 'Size',
@@ -306,41 +306,41 @@ export default class ButtonSetup {
           height: ButtonSetup.buttonHeight
         },
         position: new Vector2D({
-          x: canvasDimensions.width - 240,
+          x: canvasSize.width - 240,
           y: 0
         }),
-        text: `-  ${state.grid.width}x${state.grid.height}  +`,
+        text: `-  ${state.grid.cols}x${state.grid.rows}  +`,
         fillColour: 'gray',
         selected: false,
         action: function() {
           if (state.mouse.x >= this.position.x + (this.size.width / 2)) {
-            if (state.grid.width < 300) {
-              state.grid.width += 15
-              state.grid.height += 9
+            if (state.grid.cols < 300) {
+              state.grid.cols += 15
+              state.grid.rows += 9
               state.grid.changed = true
             }
           } else {
-            if (state.grid.width > 15) {
-              state.grid.width -= 15
-              state.grid.height -= 9
+            if (state.grid.cols > 15) {
+              state.grid.cols -= 15
+              state.grid.rows -= 9
               state.grid.changed = true
             }
           }
           this.update()
         },
         update: function() {
-          this.text = `-  ${state.grid.width}x${state.grid.height}  +`
+          this.text = `-  ${state.grid.cols}x${state.grid.rows}  +`
         }
       })
     )
 
-    this.#setHeights(buttons, canvasDimensions)
+    this.#setHeights(buttons, canvasSize)
 
     return buttons
   }
 
-  static #setHeights(buttons: Button[], canvasDimensions: Dimensions) {
-    const midHeight = Math.floor(canvasDimensions.height / 2)
+  static #setHeights(buttons: Button[], canvasSize: Size) {
+    const midHeight = Math.floor(canvasSize.height / 2)
     const halfAmount = buttons.length / 2
     const totalDist = ButtonSetup.buttonHeight + ButtonSetup.offset
 

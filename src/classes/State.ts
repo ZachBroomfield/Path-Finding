@@ -1,4 +1,5 @@
 import { BoxTypes } from './Box'
+import { Dimensions } from '../utils/Interfaces'
 
 export default class State {
   mouse: {
@@ -7,8 +8,8 @@ export default class State {
     leftClick: boolean
   }
   grid: {
-    width: number
-    height: number
+    cols: number
+    rows: number
     changed: boolean
   }
 
@@ -21,15 +22,15 @@ export default class State {
   diagonals: boolean
 
   
-  constructor({width, height}: {width: number, height: number}) {
+  constructor({cols, rows}: Dimensions) {
     this.mouse = {
       x: 0,
       y: 0,
       leftClick: false
     }
     this.grid = {
-      width: width,
-      height: height,
+      cols: cols,
+      rows: rows,
       changed: false
     }
     this.drawType = BoxTypes.Blank
