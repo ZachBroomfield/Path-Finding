@@ -101,7 +101,7 @@ export default class ButtonSetup {
         fillColour: 'green',
         selected: true,
         action: function() {
-          this.selected = true
+          this.selected = false
           state.drawType = BoxTypes.Start
           this.update()
         },
