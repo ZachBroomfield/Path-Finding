@@ -99,9 +99,9 @@ export default class ButtonSetup {
         }),
         text: 'Place Start',
         fillColour: 'green',
-        selected: true,
+        selected: false,
         action: function() {
-          this.selected = false
+          this.selected = true
           state.drawType = BoxTypes.Start
           this.update()
         },
@@ -188,6 +188,9 @@ export default class ButtonSetup {
         }
       })
     )
+
+    // start with Draw Barriers selected
+    buttons[buttons.length - 1].action()
 
     buttons.push(
       new Button({
