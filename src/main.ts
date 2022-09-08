@@ -56,7 +56,7 @@ function animate() {
   }
 
   if (state.randomise) {
-    const weighting = state.diagonals ? 0.41 : 0.59
+    const weighting = state.diagonals ? 0.44 : 0.62
     resetList()
     grid.randomiseBarriers(weighting)
 
@@ -127,7 +127,7 @@ function checkValidSolution(grid: Grid) {
   while(!path.pathFound) {
     path.createNextStep(grid, state.diagonals)
     
-    if (path.noPath()) return false 
+    if (path.noPath()) return false
   }
   state.createPath = false
 
