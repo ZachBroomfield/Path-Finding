@@ -10,10 +10,10 @@ export enum BoxTypes {
 }
 
 export default class Box {
-  type: BoxTypes
+  #type: BoxTypes
 
   constructor(type: BoxTypes = BoxTypes.Blank) {
-    this.type = type
+    this.#type = type
   }
 
   draw(ctx: CanvasRenderingContext2D, topLeft: Point, spacing: number) {
@@ -29,8 +29,12 @@ export default class Box {
     ctx.stroke()
   }
 
+  getType(): BoxTypes {
+    return this.#type
+  }
+
   #getColour(): string {
-    switch(this.type) {
+    switch(this.#type) {
       case(BoxTypes.Start):
         return 'green'
 

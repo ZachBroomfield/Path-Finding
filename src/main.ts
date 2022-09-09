@@ -4,13 +4,14 @@ import GridFactory from './classes/GridFactory'
 import State from './classes/State'
 import Path2D from './classes/Path2D'
 import ButtonHandler from './classes/ButtonHandler'
+import { addEventListeners } from './utils/EventListenerHandler'
 
 const canvasHandler = new CanvasHandler({
   size: {
     height: innerHeight,
     width: innerWidth
   },
-  id: "canvas"
+  id: 'canvas'
 })
 
 const state = new State({cols: 150, rows: 90})
@@ -26,7 +27,7 @@ let grid = GridFactory.create({
   }
 })
 
-let path = new Path2D(grid.dimensions)
+let path = new Path2D(grid.getDimensions())
 
 const buttonHandler = new ButtonHandler(canvasHandler.getSize(), state)
   
@@ -49,7 +50,7 @@ function animate() {
       }
     })
 
-    path = new Path2D(grid.dimensions)
+    path = new Path2D(grid.getDimensions())
     state.grid.changed = false
     initialDraw()
     buttonHandler.drawButtons(canvasHandler.getCtx())
@@ -86,10 +87,13 @@ function animate() {
     state.resetAll = false
   }
 
+
+  // only search next step if frame is multiple of 5
+  // reduces drawing speed for path for asthetics
   if (state.frame % 5 === 0) {
 
     if (state.createPath) {
-      if (path.pathFound) {
+      if (path.pathFound()) {
         state.createPath = false
         buttonHandler.updateButtons()
       } else {
@@ -134,17 +138,6 @@ function checkValidSolution(grid: Grid) {
   return true
 }
 
+addEventListeners(state, handleMouseClick)
 initialDraw()
 animate()
-
-document.addEventListener('mousedown', () => {
-  handleMouseClick()
-})
-
-document.addEventListener('mouseup', () => {
-  state.mouse.leftClick = false
-})
-
-document.addEventListener('mousemove', e => {
-  state.updateMousePosition(e)
-})

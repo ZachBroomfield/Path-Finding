@@ -16,25 +16,25 @@ interface ConstructionParams {
 }
 
 export default class Grid {
-  dimensions: Dimensions
-  topLeft: Vector2D
-  gridLines: GridLine[]
-  boxes: GridBoxes
-  spacing: number
+  #dimensions: Dimensions
+  #topLeft: Vector2D
+  #gridLines: GridLine[]
+  #boxes: GridBoxes
+  #spacing: number
   coordToPosition: (arg: Point) => Point
   positionToCoord: (arg: Point) => Point | null
-  changed: Point[]
+  #changed: Point[]
 
   constructor(params: ConstructionParams) {
-    this.dimensions = params.dimensions
-    this.topLeft = params.topLeft
-    this.gridLines = params.gridLines
-    this.spacing = params.spacing
-    this.boxes = params.boxes
+    this.#dimensions = params.dimensions
+    this.#topLeft = params.topLeft
+    this.#gridLines = params.gridLines
+    this.#spacing = params.spacing
+    this.#boxes = params.boxes
     this.coordToPosition = params.coordToPosition
     this.positionToCoord = params.positionToCoord
 
-    this.changed = []
+    this.#changed = []
     this.#setStartAndEnd()
   }
 
@@ -43,12 +43,12 @@ export default class Grid {
   }
 
   get(x: number, y: number): Box {
-    return this.boxes.get(x, y)
+    return this.#boxes.get(x, y)
   }
 
   set(x: number, y: number, value: number) {
-    this.boxes.set(x, y, value)
-    this.changed.push({x, y})
+    this.#boxes.set(x, y, value)
+    this.#changed.push({x, y})
   }
 
   drawChanged(ctx: CanvasRenderingContext2D) {
@@ -75,8 +75,12 @@ export default class Grid {
     return this.#getStart()
   }
 
+  getDimensions(): Dimensions {
+    return this.#dimensions
+  }
+
   resetChanged() {
-    this.changed.length = 0
+    this.#changed.length = 0
   }
 
   // PRIVATE
@@ -84,18 +88,19 @@ export default class Grid {
   #drawGridLines(ctx: CanvasRenderingContext2D) {
     ctx.strokeStyle = 'gray'
     ctx.lineWidth = 1
-    this.gridLines.forEach(line => {
+    this.#gridLines.forEach(line => {
+      const segment = line.get()
       ctx.beginPath()
-      ctx.moveTo(line.start.x, line.start.y)
-      ctx.lineTo(line.end.x, line.end.y)
+      ctx.moveTo(segment.start.x, segment.start.y)
+      ctx.lineTo(segment.end.x, segment.end.y)
       ctx.stroke()
     })
   }
 
   #getEnd(): Vector2D {
-    for (let i = 1; i <= this.dimensions.cols; i++) {
-      for (let j = 1; j <= this.dimensions.rows; j++) {
-        if (this.get(i, j).type === BoxTypes.End) {
+    for (let i = 1; i <= this.#dimensions.cols; i++) {
+      for (let j = 1; j <= this.#dimensions.rows; j++) {
+        if (this.get(i, j).getType() === BoxTypes.End) {
           return new Vector2D(i, j)
         }
       }
@@ -105,7 +110,7 @@ export default class Grid {
   }
 
   #setStartAndEnd() {
-    const {cols, rows} = this.dimensions
+    const {cols, rows} = this.#dimensions
 
     const startX = Math.min(Math.ceil(cols * 0.1), 3)
     const startY = Math.ceil(rows / 2)
@@ -129,32 +134,35 @@ export default class Grid {
   }
 
   #drawChangedBoxes(ctx: CanvasRenderingContext2D) {
-    this.changed.forEach(point => {
-      const box = this.boxes.get(point.x, point.y)
+    this.#changed.forEach(point => {
+      const box = this.#boxes.get(point.x, point.y)
       box.draw(
         ctx,
         {
-          x: this.topLeft.x + ((point.x - 1) * this.spacing) + 1,
-          y: this.topLeft.y + ((point.y - 1) * this.spacing) + 1
+          x: this.#topLeft.x + ((point.x - 1) * this.#spacing) + 1,
+          y: this.#topLeft.y + ((point.y - 1) * this.#spacing) + 1
         },
-          this.spacing - 2
+          this.#spacing - 2
       )
     })
 
-    this.changed.length = 0
+    this.#changed.length = 0
   }
 
   #editGrid(state: State) {
     const coord = this.positionToCoord({x: state.mouse.x, y: state.mouse.y})
     if (coord !== null) {
-      const box = this.get(coord.x, coord.y)
-      if (box.type !== state.drawType && box.type !== 2 && box.type !== 3) {
+      const boxType = this.get(coord.x, coord.y).getType()
+
+      if (boxType !== state.drawType && boxType !== 2 && boxType !== 3) {
         if (state.drawType === BoxTypes.Start) {
           this.#removeOldStart()
         }
+        
         if (state.drawType === BoxTypes.End) {
           this.#removeOldEnd()
         }
+
         this.set(coord.x, coord.y, state.drawType)
       }
     }
@@ -163,9 +171,9 @@ export default class Grid {
   #randomiseBarriers(weighting: number) {
     this.clearAll()
     
-    for (let i = 1; i <= this.dimensions.cols; i++) {
-      for (let j = 1; j <= this.dimensions.rows; j++) {
-        const type = this.get(i, j).type
+    for (let i = 1; i <= this.#dimensions.cols; i++) {
+      for (let j = 1; j <= this.#dimensions.rows; j++) {
+        const type = this.get(i, j).getType()
         if (type === BoxTypes.Start || type === BoxTypes.End) continue
 
         const rand = Math.random()
@@ -179,9 +187,9 @@ export default class Grid {
   }
 
   #clearPath() {
-    for (let i = 1; i <= this.dimensions.cols; i++) {
-      for (let j = 1; j <= this.dimensions.rows; j++) {
-        const type = this.get(i, j).type
+    for (let i = 1; i <= this.#dimensions.cols; i++) {
+      for (let j = 1; j <= this.#dimensions.rows; j++) {
+        const type = this.get(i, j).getType()
         if (type === BoxTypes.Path || type === BoxTypes.Success) {
           this.set(i, j, BoxTypes.Blank)
         }
@@ -190,9 +198,9 @@ export default class Grid {
   }
 
   #clearAll() {
-    for (let i = 1; i <= this.dimensions.cols; i++) {
-      for (let j = 1; j <= this.dimensions.rows; j++) {
-        const type = this.get(i, j).type
+    for (let i = 1; i <= this.#dimensions.cols; i++) {
+      for (let j = 1; j <= this.#dimensions.rows; j++) {
+        const type = this.get(i, j).getType()
         if (
           type === BoxTypes.Barrier ||
           type === BoxTypes.Path ||
@@ -205,9 +213,9 @@ export default class Grid {
   }
 
   #getStart(): Vector2D {
-    for (let i = 1; i <= this.dimensions.cols; i++) {
-      for (let j = 1; j <= this.dimensions.rows; j++) {
-        if (this.get(i, j).type === BoxTypes.Start) {
+    for (let i = 1; i <= this.#dimensions.cols; i++) {
+      for (let j = 1; j <= this.#dimensions.rows; j++) {
+        if (this.get(i, j).getType() === BoxTypes.Start) {
           return new Vector2D(i, j)
         }
       }

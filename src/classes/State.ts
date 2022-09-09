@@ -12,7 +12,6 @@ export default class State {
     rows: number
     changed: boolean
   }
-
   drawType: BoxTypes
   createPath: boolean
   frame: number

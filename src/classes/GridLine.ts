@@ -7,18 +7,18 @@ interface Segment {
 }
 
 export default class GridLine {
-  start: Vector2D
-  end: Vector2D
+  #start: Vector2D
+  #end: Vector2D
 
   constructor(segment: Segment) {
-    this.start = new Vector2D(segment.start)
-    this.end = new Vector2D(segment.end)
+    this.#start = new Vector2D(segment.start)
+    this.#end = new Vector2D(segment.end)
   }
 
   get(): Segment {
     return {
-      start: this.start,
-      end: this.end
+      start: this.#start,
+      end: this.#end
     }
   }
 }

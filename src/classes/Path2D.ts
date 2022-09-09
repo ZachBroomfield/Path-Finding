@@ -6,14 +6,14 @@ import { Point, Dimensions } from '../utils/Interfaces'
 
 export default class Path2D {
   #values: Array2D<Vector2D | number>
-  pathFound: boolean
+  #pathFound: boolean
   #started: boolean
   #dimensions: Dimensions
   #currentEnds: Vector2D[]
 
   constructor(dimensions: Dimensions) {
     this.#values = new Array2D(dimensions, 0)
-    this.pathFound = false
+    this.#pathFound = false
     this.#started = false
     this.#dimensions = dimensions
     this.#currentEnds = []
@@ -31,7 +31,7 @@ export default class Path2D {
     const directionsToCheck = this.#getDirections(diagonals)
     
     this.#currentEnds.forEach(vector => {
-      if (this.pathFound) return
+      if (this.#pathFound) return
 
       directionsToCheck.forEach(direction => {
         this.#checkDirection(
@@ -40,7 +40,7 @@ export default class Path2D {
       })
     })
 
-    if (this.pathFound) {
+    if (this.#pathFound) {
       this.#currentEnds.length = 0
     } else {
       this.#currentEnds = tempEnds
@@ -49,13 +49,17 @@ export default class Path2D {
 
   reset() {
     this.#values = new Array2D(this.#dimensions, 0)
-    this.pathFound = false
+    this.#pathFound = false
     this.#currentEnds.length = 0
     this.#started = false
   }
 
   noPath(): boolean {
-    return this.#currentEnds.length === 0 && !this.pathFound
+    return this.#currentEnds.length === 0 && !this.#pathFound
+  }
+
+  pathFound(): boolean {
+    return this.#pathFound
   }
 
   #checkDirection(
@@ -75,7 +79,7 @@ export default class Path2D {
       tempEnds.push(direction)
       return
     } else if (nextPosition === 2) {
-      this.pathFound = true
+      this.#pathFound = true
   
       let value = last
       while (this.#values.get(value.x - 1, value.y - 1) !== 1) {
@@ -87,12 +91,12 @@ export default class Path2D {
 
   #checkGrid(grid :Grid, position: Vector2D): number {
     if (
-      position.x < 1 || position.x > grid.dimensions.cols ||
-      position.y < 1 || position.y > grid.dimensions.rows
+      position.x < 1 || position.x > grid.getDimensions().cols ||
+      position.y < 1 || position.y > grid.getDimensions().rows
     ) return 0
   
-    if (grid.get(position.x, position.y).type === BoxTypes.Blank) return 1
-    if (grid.get(position.x, position.y).type === BoxTypes.End) return 2
+    if (grid.get(position.x, position.y).getType() === BoxTypes.Blank) return 1
+    if (grid.get(position.x, position.y).getType() === BoxTypes.End) return 2
   
     return 0
   }
