@@ -14,12 +14,12 @@ const canvasHandler = new CanvasHandler({
   id: 'canvas'
 })
 
-const state = new State({cols: 150, rows: 90})
+const state = new State()
 
-let grid = GridFactory.create({
+const grid = GridFactory.create({
   dimensions: {
-    cols: state.grid.cols,
-    rows: state.grid.rows
+    cols: 150,
+    rows: 90
   },
   canvasSize: {
     width: canvasHandler.getSize().width - 250,
@@ -27,7 +27,7 @@ let grid = GridFactory.create({
   }
 })
 
-let path = new Path2D(grid.getDimensions())
+const path = new Path2D(grid.getDimensions())
 
 const buttonHandler = new ButtonHandler(canvasHandler.getSize(), state)
   
@@ -37,24 +37,6 @@ function initialDraw() {
 }
 
 function animate() {
-
-  if (state.grid.changed) {
-    grid = GridFactory.create({
-      dimensions: {
-        cols: state.grid.cols,
-        rows: state.grid.rows
-      },
-      canvasSize: {
-        width: canvasHandler.getSize().width - 250,
-        height: canvasHandler.getSize().height
-      }
-    })
-
-    path = new Path2D(grid.getDimensions())
-    state.grid.changed = false
-    initialDraw()
-    buttonHandler.drawButtons(canvasHandler.getCtx())
-  }
 
   if (state.randomise) {
     const weighting = state.diagonals ? 0.44 : 0.62
@@ -71,7 +53,7 @@ function animate() {
     state.resetPath = true
   }
 
-  if (state.mouse.leftClick && !state.createPath && !path.pathFound) {
+  if (state.mouse.leftClick && !state.createPath && !path.pathFound()) {
     grid.editGrid(state)
   }
 
@@ -87,9 +69,8 @@ function animate() {
     state.resetAll = false
   }
 
-
   // only search next step if frame is multiple of 5
-  // reduces drawing speed for path for asthetics
+  // reduces drawing speed of path for asthetics
   if (state.frame % 5 === 0) {
 
     if (state.createPath) {
@@ -128,7 +109,7 @@ function handleMouseClick() {
 function checkValidSolution(grid: Grid) {
   state.createPath = true
 
-  while(!path.pathFound) {
+  while(!path.pathFound()) {
     path.createNextStep(grid, state.diagonals)
     
     if (path.noPath()) return false

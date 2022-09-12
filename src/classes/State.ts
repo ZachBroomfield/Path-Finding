@@ -1,16 +1,10 @@
 import { BoxTypes } from './Box'
-import { Dimensions } from '../utils/Interfaces'
 
 export default class State {
   mouse: {
     x: number
     y: number
     leftClick: boolean
-  }
-  grid: {
-    cols: number
-    rows: number
-    changed: boolean
   }
   drawType: BoxTypes
   createPath: boolean
@@ -21,16 +15,11 @@ export default class State {
   diagonals: boolean
 
   
-  constructor({cols, rows}: Dimensions) {
+  constructor() {
     this.mouse = {
       x: 0,
       y: 0,
       leftClick: false
-    }
-    this.grid = {
-      cols: cols,
-      rows: rows,
-      changed: false
     }
     this.drawType = BoxTypes.Blank
     this.createPath = false

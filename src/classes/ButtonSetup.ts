@@ -277,63 +277,6 @@ export default class ButtonSetup {
       })
     )
 
-    buttons.push(
-      new Button({
-        size: {
-          width: ButtonSetup.buttonWidth,
-          height: ButtonSetup.buttonHeight
-        },
-        position: new Vector2D({
-          x: canvasSize.width - 240,
-          y: 0
-        }),
-        text: 'Size',
-        fillColour: 'gray',
-        selected: false,
-        action: function() {
-          null
-        },
-        update: function() {
-          null
-        }
-      })
-    )
-
-    buttons.push(
-      new Button({
-        size: {
-          width: ButtonSetup.buttonWidth,
-          height: ButtonSetup.buttonHeight
-        },
-        position: new Vector2D({
-          x: canvasSize.width - 240,
-          y: 0
-        }),
-        text: `-  ${state.grid.cols}x${state.grid.rows}  +`,
-        fillColour: 'gray',
-        selected: false,
-        action: function() {
-          if (state.mouse.x >= this.position.x + (this.size.width / 2)) {
-            if (state.grid.cols < 300) {
-              state.grid.cols += 15
-              state.grid.rows += 9
-              state.grid.changed = true
-            }
-          } else {
-            if (state.grid.cols > 15) {
-              state.grid.cols -= 15
-              state.grid.rows -= 9
-              state.grid.changed = true
-            }
-          }
-          this.update()
-        },
-        update: function() {
-          this.text = `-  ${state.grid.cols}x${state.grid.rows}  +`
-        }
-      })
-    )
-
     this.#setHeights(buttons, canvasSize)
 
     return buttons
