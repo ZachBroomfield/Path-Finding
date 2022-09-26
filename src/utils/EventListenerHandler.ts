@@ -1,12 +1,13 @@
 import State from '../classes/State'
 
 export function addEventListeners(state: State, callback: () => void) {
-  document.addEventListener('mousedown', () => {
-    callback()
+  document.addEventListener('mousedown', e => {
+    state.updateMousePosition(e)
+    if (e.button === 0) callback()
   })
   
-  document.addEventListener('mouseup', () => {
-    state.mouse.leftClick = false
+  document.addEventListener('mouseup', e => {
+    if (e.button === 0) state.mouse.leftClick = false
   })
   
   document.addEventListener('mousemove', e => {

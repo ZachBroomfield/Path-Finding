@@ -31,8 +31,8 @@ export default class State {
   }
 
   updateMousePosition(e :MouseEvent) {
-    this.mouse.x = e.clientX
-    this.mouse.y = e.clientY
+    this.mouse.x = e.clientX + document.documentElement.scrollLeft
+    this.mouse.y = e.clientY + document.documentElement.scrollTop
   }
 
   incrementFrame() {
